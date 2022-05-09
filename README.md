@@ -1,4 +1,4 @@
-# NEPTUNE
+# NEPTUNE Mixed Integer Programming
 <p align="center">
   <img width="100%" src="https://i.imgur.com/tm9mSuM.png" alt="Politecnico di Milano" />
 </p>
