@@ -6,7 +6,7 @@
 This repository contains the python version of the MIP solver used for NEPTUNE.
 
 ## Getting Started
-This repository has been dockerized. It's possible to fun a plug&play image at `systemautoscaler/allocation-algorithm-rest:dev`
+This repository has been dockerized. It's possible to run a plug&play image at `systemautoscaler/allocation-algorithm-rest:dev`
 
 To build a new Docker image, run:
 ```
