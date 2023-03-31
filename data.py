@@ -4,14 +4,14 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 
-import presolver
-import thesolver
+import neptune_step1
+import neptune_step2
+import solver_utils as su
+
 from output import convert_x_matrix, convert_c_matrix
 
 cpu_coeff = 1.3
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
-
-
 def data_to_solver_input(schedule_input):
     # Schedule input topology
     community = schedule_input.get('community')
@@ -51,6 +51,7 @@ def data_to_solver_input(schedule_input):
     old_gpu_allocations = np.array([[0 for _ in gpu_nodes] for _ in gpu_functions])
     core_per_req_matrix = np.array([[1 for _ in nodes] for _ in functions])
 
+    '''
     # Retrieve data from the database
     username = "user"
     password = "password"
@@ -84,7 +85,8 @@ def data_to_solver_input(schedule_input):
     print(f"CPU CONSUMPTION \n\n {cpu_df}")
 
     print(workload_on_destination_matrix)
-
+    '''
+   
     # Create auxiliary data structures
     node_map = {}
     func_map = {}
@@ -101,6 +103,7 @@ def data_to_solver_input(schedule_input):
         func = func.split("/")[1]
         gpu_func_map[func] = i
 
+    '''
     # Populate the runtime data with the data retrieved from the database
     for node, func, response_time, gpu in zip(rt_df['destination'], rt_df['function'], rt_df['response_time'],
                                               rt_df['gpu']):
@@ -129,7 +132,8 @@ def data_to_solver_input(schedule_input):
             node_delay_matrix[node_map[from_node]][node_map[to_node]] = latency
         if from_node in node_map and to_node in gpu_node_map:
             gpu_node_delay_matrix[gpu_node_map[from_node]][gpu_node_map[to_node]] = latency
-
+    '''
+   
     for function_key, x in actual_cpu_allocations.items():
         for node, ok in x.items():
             if x:
@@ -153,7 +157,7 @@ def data_to_solver_input(schedule_input):
     print(old_gpu_allocations)
 
     # Pre solving
-    cpu_data = presolver.Data(nodes, nodes, functions)
+    cpu_data = su.Data(nodes, nodes, functions)
     cpu_data.node_memory_matrix = np.array(node_memories)
     cpu_data.function_memory_matrix = np.array(function_memories)
     cpu_data.node_delay_matrix = np.array(node_delay_matrix)
@@ -165,7 +169,7 @@ def data_to_solver_input(schedule_input):
     cpu_data.old_allocations_matrix = np.array(old_cpu_allocations)
     cpu_data.core_per_req_matrix = np.array(core_per_req_matrix)
 
-    cpu_presolver = presolver.Solver(verbose=False)
+    cpu_presolver = neptune_step1.NeptuneStep1CPU(verbose=False)
     cpu_presolver.load_input(cpu_data)
     cpu_presolver.solve()
     cpu_presolver_x, cpu_presolver_c = cpu_presolver.results()
@@ -180,7 +184,7 @@ def data_to_solver_input(schedule_input):
     print(cpu_presolver_score)
 
     # The solving
-    cpu_data = thesolver.Data(nodes, nodes, functions)
+    cpu_data = su.Data(nodes, nodes, functions)
     cpu_data.node_memory_matrix = np.array(node_memories)
     cpu_data.function_memory_matrix = np.array(function_memories)
     cpu_data.node_delay_matrix = np.array(node_delay_matrix)
@@ -194,7 +198,7 @@ def data_to_solver_input(schedule_input):
     cpu_data.core_per_req_matrix = np.array(core_per_req_matrix)
     cpu_data.max_score = cpu_presolver_score
 
-    cpu_thesolver = thesolver.Solver(verbose=False)
+    cpu_thesolver = neptune_step2.NeptuneStep2(verbose=False)
     print(cpu_data.old_allocations_matrix)
     cpu_thesolver.load_input(cpu_data)
     solved = cpu_thesolver.solve()
@@ -214,7 +218,7 @@ def data_to_solver_input(schedule_input):
 
     # The solving - part 2
     print("STARTING SOLVING PART 2")
-    cpu_data = thesolver.Data(nodes, nodes, functions)
+    cpu_data = su.Data(nodes, nodes, functions)
     cpu_data.node_memory_matrix = np.array(node_memories)
     cpu_data.function_memory_matrix = np.array(function_memories)
     cpu_data.node_delay_matrix = np.array(node_delay_matrix)
@@ -227,7 +231,7 @@ def data_to_solver_input(schedule_input):
     cpu_data.core_per_req_matrix = np.array(core_per_req_matrix)
     cpu_data.max_score = cpu_presolver_score
 
-    cpu_thesolver = thesolver.Solver(verbose=False)
+    cpu_thesolver = neptune_step2.NeptuneStep2(verbose=False)
     print(cpu_data.old_allocations_matrix)
     cpu_thesolver.load_input(cpu_data)
     solved = cpu_thesolver.solve()

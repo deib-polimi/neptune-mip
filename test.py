@@ -9,7 +9,7 @@ input = {
         "node_a", "node_b", "node_c", "node_d", "gpu_node_e"
     ],
     "node_memories": [
-        30, 30, 30, 30, 30
+        40, 30, 30, 30, 30
     ],
     "node_cores": [
         10, 10, 10, 10, 10
