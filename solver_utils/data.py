@@ -2,27 +2,22 @@ import numpy as np
 from typing import List
 
 class Data:
-    sources: List[str] = []
-    nodes: List[str] = []
-    functions: List[str] = []
 
-    node_memory_matrix: np.array = np.array([])
-    function_memory_matrix: np.array = np.array([])
-    node_delay_matrix: np.array = np.array([])
-    workload_matrix: np.array = np.array([])
-    max_delay_matrix: np.array = np.array([])
-    response_time_matrix: np.array = np.array([])
-    node_cores_matrix: np.array = np.array([])
-    cores_matrix: np.array = np.array([])
-    old_allocations_matrix: np.array = np.array([])
-    core_per_req_matrix: np.array = np.array([])
+    def __init__(self, sources: List[str] = None, nodes: List[str] = None, functions: List[str] = None):
+        self.sources = sources if sources else []
+        self.nodes = nodes if nodes else []
+        self.functions = functions if functions else []
+        self.node_memory_matrix: np.array = np.array([])
+        self.function_memory_matrix: np.array = np.array([])
+        self.node_delay_matrix: np.array = np.array([])
+        self.workload_matrix: np.array = np.array([])
+        self.max_delay_matrix: np.array = np.array([])
+        self.response_time_matrix: np.array = np.array([])
+        self.node_cores_matrix: np.array = np.array([])
+        self.cores_matrix: np.array = np.array([])
+        self.old_allocations_matrix: np.array = np.array([])
+        self.core_per_req_matrix: np.array = np.array([])
 
-    gpu_function_memory_matrix: np.array = np.array([])
-    gpu_node_memory_matrix: np.array = np.array([])
-
-    prev_x = np.array([])
-
-    def __init__(self, sources: List[str], nodes: List[str], functions: List[str]):
-        self.sources = sources
-        self.nodes = nodes
-        self.functions = functions
+        self.gpu_function_memory_matrix: np.array = np.array([])
+        self.gpu_node_memory_matrix: np.array = np.array([])
+        self.prev_x = np.array([])

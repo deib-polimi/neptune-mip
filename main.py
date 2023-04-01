@@ -3,8 +3,7 @@ from logging.config import dictConfig
 
 from flask import Flask, request
 
-from data import data_to_solver_input
-from input import check_input
+from solver_utils import data_to_solver_input, check_input, NeptuneCPUOnly
 
 dictConfig({
     'version': 1,
@@ -29,15 +28,17 @@ app.app_context()
 @app.route('/')
 def serve():
     print("Request received")
-    schedule_input = request.json
-    print(schedule_input)
-    check_input(schedule_input)
-    cpu_routings, cpu_allocations = data_to_solver_input(schedule_input)
-
+    input = request.json
+    print(input)
+    check_input(input)
+    solver = NeptuneCPUOnly()
+    solver.load_data(data_to_solver_input(input))
+    solver.solve()
+    x,c = solver.results()
     response = app.response_class(
         response=json.dumps({
-            "cpu_routing_rules": cpu_routings,
-            "cpu_allocations": cpu_allocations,
+            "cpu_routing_rules": x,
+            "cpu_allocations": c,
             "gpu_routing_rules": {},
             "gpu_allocations": {},
         }),
