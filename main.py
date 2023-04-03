@@ -3,7 +3,7 @@ from logging.config import dictConfig
 
 from flask import Flask, request
 
-from solver_utils import data_to_solver_input, check_input, NeptuneCPUOnly
+from core import data_to_solver_input, check_input, NeptuneCPUOnly
 
 dictConfig({
     'version': 1,
@@ -31,7 +31,11 @@ def serve():
     input = request.json
     print(input)
     check_input(input)
-    solver = NeptuneCPUOnly()
+
+    solver = input.get("solver")
+    solver_type = solver.get("type")
+    solver_args = solver.get("args", {})
+    solver = eval(solver_type)(**solver_args)
     solver.load_data(data_to_solver_input(input))
     solver.solve()
     x,c = solver.results()

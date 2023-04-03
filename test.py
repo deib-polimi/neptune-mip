@@ -3,13 +3,18 @@ import pprint
 
 
 input = {
+    "solver" : {
+        "type" : "NeptuneCPUOnly",
+        "args" : { "alpha" : 1.0, "verbose" : False}
+    },
+    
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [
         "node_a", "node_b", "node_c", "node_d", "gpu_node_e"
     ],
     "node_memories": [
-        40, 30, 30, 30, 30
+        30, 30, 30, 30, 30
     ],
     "node_cores": [
         10, 10, 10, 10, 10
