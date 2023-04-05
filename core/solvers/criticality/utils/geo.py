@@ -1,4 +1,3 @@
-import matplotlib.cm as cm
 import random
 import numpy as np
 import geopy
@@ -106,5 +105,5 @@ def criticality(data, time, du_Dt):
             if data.req_by_user[u][r]==1:		
                 CR_requests[r]=CR[u]		
             
-    #index_CR=np.argsort(CR_requests, kind='stable')		
-    return CR_requests		
+    CR_index=np.argsort(CR_requests, kind='stable')		
+    return CR_index, CR_requests		

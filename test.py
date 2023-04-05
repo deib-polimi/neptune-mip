@@ -4,7 +4,7 @@ import pprint
 
 input = {
     "solver" : {
-        "type" : "Criticality",
+        "type" : "CriticalityHeuristic",
         "args" : { "alpha" :0.0, "verbose" : False}
     },
     

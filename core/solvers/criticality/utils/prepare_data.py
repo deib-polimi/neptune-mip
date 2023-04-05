@@ -25,7 +25,7 @@ def prepare_criticality(data):
     data.D = (data.node_coords[0,0], data.node_coords[0,1])
     live_positions = rvoAlgorithm(data)
     du_dt_temp = du_dt_function(data, 0, live_positions)
-    data.CR_matrix = criticality(data, 0, du_dt_temp)
+    data.requests_index, data.CR_matrix = criticality(data, 0, du_dt_temp)
     print("-------Criticality---------",data.CR_matrix)
 
 def prepare_live_position(data):

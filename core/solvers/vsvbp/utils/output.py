@@ -5,7 +5,7 @@ def output_x_and_c(data, solver, c, x_jr):
     c_matrix = np.empty(shape=(len(data.functions), len(data.nodes)))
     for j in range(len(data.nodes)):
         for f in range(len(data.functions)):
-            c_matrix[f][j] = solver.Value(c[f, j])
+            c_matrix[f][j] = solver.Value(c[f, j]) if solver else c[f][j]
     print("---------------C_MATRIX [F,N]----------------")
     print(c_matrix)
     

@@ -24,7 +24,7 @@ keys = [
     "actual_gpu_allocations",
 ]
 
-solvers = ["NeptuneMinDelayAndUtilization", "NeptuneMinDelay", "NeptuneMinUtilization", "VSVBP", "Criticality"]
+solvers = ["NeptuneMinDelayAndUtilization", "NeptuneMinDelay", "NeptuneMinUtilization", "VSVBP", "Criticality", "CriticalityHeuristic", "MCF"]
 
 
 def check_input(schedule_input):
