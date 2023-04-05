@@ -3,7 +3,8 @@ from logging.config import dictConfig
 
 from flask import Flask, request
 
-from core import data_to_solver_input, check_input, NeptuneCPUOnly
+from core import data_to_solver_input, check_input
+from core.solvers import *
 
 dictConfig({
     'version': 1,

@@ -55,11 +55,17 @@ def constrain_CPU_usage(data, solver, x):
 
 # If a node i contains one or more functions then n[i] is True 
 def constrain_n_according_to_c(data, solver, n, c):
+    M = 10**6
+    epsilon = 10**-6
     for i in range(len(data.nodes)):
         solver.Add(
             solver.Sum([
                 c[f, i] for f in range(len(data.functions))
-                ]) <= n[i] * 1000)
+                ]) <= n[i] * M)
+        solver.Add(
+            solver.Sum([
+                c[f, i] for f in range(len(data.functions))
+                ]) + epsilon >= n[i] )
 
 # The sum of the memory of functions deployed on a gpu device is less than its capacity
 def constrain_GPU_memory_usage(data, solver, c):

@@ -1,10 +1,8 @@
 from .utils import *
-from ..output import output_x_and_c
 from ..solver import Solver
 
 
-class NeptuneStep1Base(Solver):
-    
+class NeptuneStepBase(Solver):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.x, self.c = {}, {}
@@ -21,10 +19,15 @@ class NeptuneStep1Base(Solver):
         raise NotImplementedError("Solvers must implement init_objective()")
 
     def results(self):
-        return output_x_and_c(self.data, self.x, self.c)
+        x, c = output_x_and_c(self.data, self.x, self.c)
+        print("Step 1 - x:", x, sep='\n')
+        print("Step 1 - c:", c, sep='\n')
+        self.data.prev_x = x
+        self.data.prev_c = c 
+        return x, c
     
 
-class NeptuneStep1CPUBase(NeptuneStep1Base):
+class NeptuneStep1CPUBase(NeptuneStepBase):
 
     def init_constraints(self):
         super().init_constraints()
@@ -33,7 +36,6 @@ class NeptuneStep1CPUBase(NeptuneStep1Base):
 
        
 class NeptuneStep1CPUMinUtilization(NeptuneStep1CPUBase):
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.n = {}
@@ -49,11 +51,15 @@ class NeptuneStep1CPUMinUtilization(NeptuneStep1CPUBase):
     def init_objective(self):
         minimize_node_utilization(self.data, self.objective, self.n)
 
-    
+    def results(self):
+        x, c = super().results()
+        n = output_n(self.data, self.n)
+        self.data.prev_n = n
+        print("Step 1 - n:", n, sep='\n')
+        return x, c
 
 
 class NeptuneStep1CPUMinDelay(NeptuneStep1CPUBase):
-    
     def init_objective(self):
         minimize_network_delay(self.data, self.objective, self.x)
 
@@ -61,13 +67,15 @@ class NeptuneStep1CPUMinDelayAndUtilization(NeptuneStep1CPUMinUtilization):
     def __init__(self, alpha=0.5, **kwargs):
         super().__init__(**kwargs)
         self.alpha = alpha
-        print("al", alpha)
 
+    def load_data(self, data):
+        data.alpha = self.alpha
+        super().load_data(data)
+    
     def init_objective(self):
         minimize_node_delay_and_utilization(self.data, self.objective, self.n, self.x, self.alpha)
 
-class NeptuneStep1GPUBase(NeptuneStep1Base):
-
+class NeptuneStep1GPUBase(NeptuneStepBase):
     def init_constraints(self):
         super().init_constraints()
         constrain_GPU_memory_usage(self.data, self.solver, self.c)

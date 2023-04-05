@@ -1,5 +1,6 @@
 import numpy as np
 
+#TODO: check var name 
 def init_x(data, solver, x):
     for f in range(len(data.functions)):
         for i in range(len(data.sources)):

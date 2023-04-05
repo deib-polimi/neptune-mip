@@ -1,13 +1,13 @@
 from ..solver import Solver
 from .neptune_step1 import *
-from .neptune_step2 import NeptuneStep2MinUtilization
-from ..output import convert_x_matrix, convert_c_matrix
+from .neptune_step2 import *
+from .utils.output import convert_x_matrix, convert_c_matrix
 
-class NeptuneCPUOnly(Solver):
-    def __init__(self, **kwargs):
+class NeptuneBase(Solver):
+    def __init__(self, step1=None, step2=None, **kwargs):
         super().__init__(**kwargs)
-        self.step1 = NeptuneStep1CPUMinDelayAndUtilization(**kwargs)
-        self.step2 = NeptuneStep2MinUtilization(**kwargs)
+        self.step1 = step1
+        self.step2 = step2
         self.solved = False
 
     def init_vars(self): pass
@@ -17,15 +17,10 @@ class NeptuneCPUOnly(Solver):
         self.step1.load_data(self.data)
         self.step1.solve()
         self.step1_x, self.step1_c = self.step1.results()
-        print("Step 1 x", self.step1_x)
-        print("Step 1 c", self.step1_c)
         self.data.max_score = self.step1.score()
-        print("score", self.data.max_score)
-        #self.step2.load_data(self.data)
-        #self.solved = self.step2.solve()
-        #self.step2_x, self.step2_c = self.step2.results()
-        #print("Step 2 x", self.step2_x)
-        #print("Step 2 c", self.step2_c)
+        self.step2.load_data(self.data)
+        self.solved = self.step2.solve()
+        self.step2_x, self.step2_c = self.step2.results()
         return self.solved
     
     def results(self): 
@@ -34,3 +29,28 @@ class NeptuneCPUOnly(Solver):
         else:
             return convert_x_matrix(self.step1_x, self.data.nodes, self.data.functions, self.data.nodes), convert_c_matrix(self.step1_c, self.data.functions, self.data.nodes)
         
+
+class NeptuneMinDelayAndUtilization(NeptuneBase):
+    def __init__(self, **kwargs):
+        super().__init__(
+            NeptuneStep1CPUMinDelayAndUtilization(**kwargs), 
+            NeptuneStep2MinDelayAndUtilization(**kwargs),
+            **kwargs
+            )
+
+
+class NeptuneMinDelay(NeptuneBase):
+    def __init__(self, **kwargs):
+        super().__init__(
+            NeptuneStep1CPUMinDelay(**kwargs), 
+            NeptuneStep2MinDelay(**kwargs),
+            **kwargs
+            )
+
+class NeptuneMinUtilization(NeptuneBase):
+    def __init__(self, **kwargs):
+        super().__init__(
+            NeptuneStep1CPUMinUtilization(**kwargs), 
+            NeptuneStep2MinUtilization(**kwargs),
+            **kwargs
+            )

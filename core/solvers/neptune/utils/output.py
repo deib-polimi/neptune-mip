@@ -14,6 +14,12 @@ def output_x_and_c(data, x, c):
             c_matrix[f][j] = c[f, j].solution_value()
     return x_matrix, c_matrix
 
+def output_n(data, n):
+    n_matrix = np.empty(shape=(len(data.nodes),))
+    for j in range(len(data.nodes)):
+        n_matrix[j] = n[j].solution_value()
+    return n_matrix
+
 def convert_x_matrix(matrix, sources, functions, nodes):
     routings = defaultdict(lambda : defaultdict(lambda : defaultdict(float)))
     assert matrix.shape == (len(sources), len(functions), len(nodes)), f"X matrix shape malformed. matrix shape is {matrix.shape} but it should be {(len(sources), len(functions), len(nodes))}"
