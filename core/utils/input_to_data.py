@@ -1,9 +1,9 @@
-
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 from .data import Data
 from hurry.filesize import size
+
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 
 keys = [

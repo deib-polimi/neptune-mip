@@ -39,7 +39,7 @@ def serve():
     solver = eval(solver_type)(**solver_args)
     solver.load_data(data_to_solver_input(input))
     solver.solve()
-    x,c = solver.results()
+    x, c = solver.results()
     response = app.response_class(
         response=json.dumps({
             "cpu_routing_rules": x,
@@ -52,5 +52,6 @@ def serve():
     )
 
     return response
+
 
 app.run(host='0.0.0.0', port=5000, threaded=False, processes=10)

@@ -2,8 +2,10 @@ from .utils import *
 from .neptune_step1 import *
 
 class NeptuneStep2Base(NeptuneStepBase):
-    def __init__(self, **kwargs):
+    def __init__(self, mode=str, **kwargs):
         super().__init__(**kwargs)
+        self.mode = mode
+        assert mode in ["delete", "create"]
         self.moved_from, self.moved_to = {}, {}
 
     def init_vars(self):
@@ -20,7 +22,10 @@ class NeptuneStep2Base(NeptuneStepBase):
         constrain_moved_from(self.data, self.solver, self.moved_from, self.c)
         constrain_moved_to(self.data, self.solver, self.moved_to, self.c)
         constrain_migrations(self.data, self.solver, self.c, self.allocated, self.deallocated)
-        constrain_deletions(self.data, self.solver, self.c, self.allocated, self.deallocated)
+        if self.mode == "delete":
+            constrain_deletions(self.data, self.solver, self.c, self.allocated, self.deallocated)
+        elif self.mode == "create":
+            constrain_creations(self.data, self.solver, self.c, self.allocated, self.deallocated)
 
     def init_objective(self):
         minimize_disruption(self.data, self.objective, self.moved_from, self.moved_to, self.allocated, self.deallocated)

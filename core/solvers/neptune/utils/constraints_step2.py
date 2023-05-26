@@ -71,3 +71,13 @@ def constrain_deletions(data, solver, c, allocated, deallocated):
         solver.Sum([c[f, i]
                             for f, i in itertools.product(range(len(data.functions)), range(len(data.nodes)))]) >= 0
         )
+
+def constrain_creations(data, solver, c, allocated, deallocated):
+    solver.Add(
+        deallocated +
+        allocated -
+        solver.Sum([data.old_allocations_matrix[f, i]
+                            for f, i in itertools.product(range(len(data.functions)), range(len(data.nodes)))]) +
+        solver.Sum([c[f, i]
+                            for f, i in itertools.product(range(len(data.functions)), range(len(data.nodes)))]) >= 0
+        )
