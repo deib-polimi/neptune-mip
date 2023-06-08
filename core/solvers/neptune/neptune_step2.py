@@ -55,6 +55,7 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
         super().init_constraints()
         constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
         constrain_node_utilization(self.data, self.solver, self.n)
+        constrain_budget(self.data, self.solver, self.n)
 
     def results(self):
         x, c = super().results()

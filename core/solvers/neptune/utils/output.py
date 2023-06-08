@@ -32,7 +32,7 @@ def convert_x_matrix(matrix, sources, functions, nodes):
 
 def convert_c_matrix(matrix, functions, nodes):
     allocations = defaultdict(lambda : defaultdict(bool))
-    assert matrix.shape == (len(functions), len(nodes)), f"X matrix shape malformed. matrix shape is {matrix.shape} but it should be {(len(sources), len(functions), len(nodes))}"
+    assert matrix.shape == (len(functions), len(nodes)), f"X matrix shape malformed. matrix shape is {matrix.shape} but it should be {(len(functions), len(nodes))}"
     for f, function in enumerate(functions):
         for j, destination in enumerate(nodes):
             if matrix[f][j] > 0.001:

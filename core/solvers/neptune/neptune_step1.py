@@ -47,6 +47,7 @@ class NeptuneStep1CPUMinUtilization(NeptuneStep1CPUBase):
     def init_constraints(self):
         super().init_constraints()
         constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
+        constrain_budget(self.data, self.solver, self.n)
 
     def init_objective(self):
         minimize_node_utilization(self.data, self.objective, self.n)

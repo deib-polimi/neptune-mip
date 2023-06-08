@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List
 
+
 class Data:
 
     def __init__(self, sources: List[str] = None, nodes: List[str] = None, functions: List[str] = None):
@@ -21,3 +22,6 @@ class Data:
         self.gpu_function_memory_matrix: np.array = np.array([])
         self.gpu_node_memory_matrix: np.array = np.array([])
         self.prev_x = np.array([])
+
+        self.node_costs: np.array = np.array([])
+        self.node_budget: int = 0

@@ -72,7 +72,7 @@ def check_input(schedule_input):
 def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     aux_data = Data()
     setup_community_data(input, aux_data)
-    setup_runtime_data(aux_data)    
+    setup_runtime_data(aux_data)
     create_mappings(aux_data)
     if with_db:
         update_old_allocations(aux_data)
@@ -89,6 +89,7 @@ def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     data.cores_matrix = np.array(aux_data.cores_matrix)
     data.old_allocations_matrix = np.array(aux_data.old_cpu_allocations)
     data.core_per_req_matrix = np.array(aux_data.core_per_req_matrix)
+    setup_budget_data(data)
     
     return data
 
@@ -130,6 +131,10 @@ def setup_runtime_data(data):
     data.old_cpu_allocations = np.array([[0 for _ in data.nodes] for _ in data.functions])
     data.old_gpu_allocations = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
     data.core_per_req_matrix = np.array([[1 for _ in data.nodes] for _ in data.functions])
+
+def setup_budget_data(data):
+    data.node_costs = np.array([5 for _ in data.nodes])
+    data.node_budget = 30
 
 def create_mappings(data):
     data.node_map = {}

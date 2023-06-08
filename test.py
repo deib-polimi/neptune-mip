@@ -1,13 +1,13 @@
 import requests
 import pprint
 
-
 input = {
-    "solver" : {
-        "type" : "CriticalityHeuristic",
-        "args" : { "alpha" :0.0, "verbose" : False}
+
+    "solver": {
+        "type": "NeptuneMinDelay",
+        "args": {"alpha": 0.0, "verbose": False}
     },
-    
+
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [
@@ -52,7 +52,7 @@ input = {
             "node_c": True
         },
         "ns/fn_3": {
-             "node_b": True,
+            "node_b": True,
             # "node_d": True,
             # "node_c": True
         },
