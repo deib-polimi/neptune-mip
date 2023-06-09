@@ -7,7 +7,7 @@ from hurry.filesize import size
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 
 keys = [
-    "solver",
+    # "solver",
     "community",
     "namespace",
     "function_names",
@@ -34,8 +34,8 @@ def check_input(schedule_input):
     for key in keys:
         assert key in schedule_input.keys(), f"Key `{key}` not in schedule input"
 
-    assert "type" in schedule_input["solver"]
-    assert schedule_input["solver"]["type"] in solvers
+    # assert "type" in schedule_input["solver"]
+    # assert schedule_input["solver"]["type"] in solvers
      
     functions = schedule_input.get('function_names', [])
     function_memories = schedule_input.get('function_memories', [])

@@ -33,7 +33,7 @@ def serve():
     print(input)
     check_input(input)
 
-    solver = input.get("solver")
+    solver = input.get("solver", {'type': 'NeptuneMinDelayAndUtilization'})
     solver_type = solver.get("type")
     solver_args = solver.get("args", {})
     solver = eval(solver_type)(**solver_args)

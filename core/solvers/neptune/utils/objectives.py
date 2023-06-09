@@ -28,7 +28,7 @@ def minimize_node_utilization(data, objective, n):
 
 
 def minimize_node_delay_and_utilization(data, objective, n, x, alpha):
-    offset_util = -alpha * 1 / (len(data.nodes))
+    # offset_util = -alpha * 1 / (len(data.nodes))
     for i in range(len(data.nodes)):
         objective.SetCoefficient(n[i], float(alpha / (len(data.nodes))))
 
@@ -44,7 +44,7 @@ def minimize_node_delay_and_utilization(data, objective, n, x, alpha):
                     if total_workload:
                         max_workload_delay = min(max_func_delay, max_node_delay) * np.sum(workload)
                         objective.SetCoefficient(x[i, f, j], float((1 - alpha) * workload * delay / max_workload_delay))
-    objective.SetOffset(offset_util)
+    # objective.SetOffset(offset_util)
     objective.SetMinimization()
 
 

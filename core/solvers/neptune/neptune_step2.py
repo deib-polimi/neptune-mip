@@ -1,12 +1,14 @@
 from .utils import *
 from .neptune_step1 import *
 
+
 class NeptuneStep2Base(NeptuneStepBase):
-    def __init__(self, mode=str, **kwargs):
+    def __init__(self, mode=str, alpha=0.5, **kwargs):
         super().__init__(**kwargs)
         self.mode = mode
         assert mode in ["delete", "create"]
         self.moved_from, self.moved_to = {}, {}
+        self.alpha = alpha
 
     def init_vars(self):
         super().init_vars()
@@ -26,6 +28,7 @@ class NeptuneStep2Base(NeptuneStepBase):
             constrain_deletions(self.data, self.solver, self.c, self.allocated, self.deallocated)
         elif self.mode == "create":
             constrain_creations(self.data, self.solver, self.c, self.allocated, self.deallocated)
+        constrain_score(self.data, self.solver, self.x, self.n, self.alpha)
 
     def init_objective(self):
         minimize_disruption(self.data, self.objective, self.moved_from, self.moved_to, self.allocated, self.deallocated)
@@ -39,7 +42,6 @@ class NeptuneStep2Base(NeptuneStepBase):
         print("Number of delta pod allocated")
         print(-self.allocated.solution_value())
         return x, c
-
 
 
 class NeptuneStep2MinUtilization(NeptuneStep2Base):
@@ -62,7 +64,8 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
         n = output_n(self.data, self.n)
         print("Step 2 - n:", n, sep='\n')
         return x, c
-    
+
+
 class NeptuneStep2MinDelay(NeptuneStep2Base):
     def __init__(self, delay_coeff=1.3, **kwargs):
         super().__init__(**kwargs)
@@ -71,6 +74,7 @@ class NeptuneStep2MinDelay(NeptuneStep2Base):
     def init_constraints(self):
         super().init_constraints()
         constrain_network_delay(self.data, self.solver, self.x, self.delay_coeff)
+
 
 class NeptuneStep2MinDelayAndUtilization(NeptuneStep2MinUtilization):
     def __init__(self, delay_coeff=1.3, **kwargs):
