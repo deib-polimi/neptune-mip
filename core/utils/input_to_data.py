@@ -116,7 +116,7 @@ def setup_community_data(input, data):
     data.actual_gpu_allocations = input.get('actual_gpu_allocations')
     data.node_cores = input.get('node_cores')
     data.gpu_function_memories = input.get('gpu_function_memories')
-    data.max_delay_matrix = input.get('function_max_delays')
+    data.max_delay_matrix = [1000 for _ in range(len(data.function_memories))]
 
 
 def setup_runtime_data(data):

@@ -54,4 +54,4 @@ def serve():
     return response
 
 
-app.run(host='0.0.0.0', port=5000, threaded=False, processes=10)
+app.run(host='0.0.0.0', port=5000, threaded=False, processes=10, debug=True)
