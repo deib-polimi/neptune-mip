@@ -1,15 +1,20 @@
 import requests
 import pprint
 
-
 input = {
+
+    "solver": {
+        "type": "NeptuneMinDelay",
+        "args": {"alpha": 0.0, "verbose": False}
+    },
+
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [
         "node_a", "node_b", "node_c", "node_d", "gpu_node_e"
     ],
     "node_memories": [
-        30, 30, 30, 30, 30
+        40, 40, 30, 30, 30
     ],
     "node_cores": [
         10, 10, 10, 10, 10
@@ -47,13 +52,13 @@ input = {
             "node_c": True
         },
         "ns/fn_3": {
-            # "node_a": True,
+            "node_b": True,
             # "node_d": True,
             # "node_c": True
         },
         "ns/gpu_fn_4": {
             # "node_a": True,
-            # "node_b": True,
+            "node_b": True,
             # "node_d": True
         }
     },
