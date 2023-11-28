@@ -36,8 +36,10 @@ def serve():
     solver = input.get("solver", {'type': 'NeptuneMinDelayAndUtilization'})
     solver_type = solver.get("type")
     solver_args = solver.get("args", {})
+    with_db = input.get("with_db", True)
+
     solver = eval(solver_type)(**solver_args)
-    solver.load_data(data_to_solver_input(input))
+    solver.load_data(data_to_solver_input(input, with_db=with_db))
     solver.solve()
     x, c = solver.results()
     response = app.response_class(

@@ -75,7 +75,8 @@ def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     setup_runtime_data(aux_data)
     create_mappings(aux_data)
     if with_db:
-        update_old_allocations(aux_data)
+        update_data_from_db(aux_data)
+    update_old_allocations(aux_data)
 
 
     data = Data(aux_data.nodes, aux_data.nodes, aux_data.functions)
@@ -162,20 +163,20 @@ def update_data_from_db(data):
     interval = "'30 seconds'"
     cnx = create_engine(postgres_str)
     ar_df = pd.read_sql(
-        sql=f"SELECT function, source, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, source ",
+        sql=f"SELECT function, source, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, source ",
         con=cnx)
     ard_df = pd.read_sql(
-        sql=f"SELECT function, destination, gpu, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, destination, gpu",
+        sql=f"SELECT function, destination, gpu, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, destination, gpu",
         con=cnx)
     rt_df = pd.read_sql(
-        sql=f"SELECT function, destination, gpu, avg(latency) AS response_time FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, destination, gpu ",
+        sql=f"SELECT function, destination, gpu, avg(latency) AS response_time FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, destination, gpu ",
         con=cnx)
     dl_df = pd.read_sql(
         sql=f"SELECT f,t,l FROM (SELECT from_node, to_node FROM ping GROUP BY from_node, to_node) as p1 INNER JOIN LATERAL (SELECT from_node as f, to_node as t, avg_latency as l FROM ping p2 WHERE p1.from_node = p2.from_node AND p1.to_node = p2.to_node ORDER BY timestamp DESC LIMIT 1) AS data ON true",
         con=cnx
     )
     cpu_df = pd.read_sql(
-        sql=f"SELECT function, node, avg(cores) AS cores FROM resource WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, node",
+        sql=f"SELECT function, node, avg(cores) AS cores FROM resource WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, node",
         con=cnx
     )
 
@@ -223,7 +224,7 @@ def update_old_allocations(data):
                 func = function_key.split("/")[1]
                 data.old_cpu_allocations[data.func_map[func]][data.node_map[node]] = ok
 
-    core_per_req_matrix = np.nan_to_num(data.cores_matrix / data.workload_on_destination_matrix, nan=0)
+    data.core_per_req_matrix = np.nan_to_num(data.cores_matrix / data.workload_on_destination_matrix, nan=0)
 
     data.old_cpu_allocations = np.array(data.old_cpu_allocations, dtype=bool).astype(int)
     if data.old_cpu_allocations.sum() == 0:

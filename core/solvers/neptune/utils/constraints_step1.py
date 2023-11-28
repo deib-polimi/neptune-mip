@@ -1,3 +1,6 @@
+M = 10**6
+epsilon = 10**-6
+
 # If a function `f` is deployed on node i then c[f,i] is True
 def constrain_c_according_to_x(data, solver, c, x):
     for f in range(len(data.functions)):
@@ -5,7 +8,11 @@ def constrain_c_according_to_x(data, solver, c, x):
             solver.Add(
                 solver.Sum([
                     x[i, f, j] for i in range(len(data.sources))
-                ]) <= c[f, j] * 1000)
+                ]) <= c[f, j] * M)
+            solver.Add(
+                solver.Sum([
+                    x[i, f, j] for i in range(len(data.sources))
+                ]) + epsilon >= c[f, j] )
 
 
 # The sum of the memory of functions deployed on a node is less than its capacity
@@ -61,8 +68,6 @@ def constrain_CPU_usage(data, solver, x):
 
 # If a node i contains one or more functions then n[i] is True
 def constrain_n_according_to_c(data, solver, n, c):
-    M = 10 ** 6
-    epsilon = 10 ** -6
     for i in range(len(data.nodes)):
         solver.Add(
             solver.Sum([
