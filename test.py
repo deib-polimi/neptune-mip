@@ -15,12 +15,12 @@ input = {
     "node_delay_matrix": [[0, 3, 2], 
                           [3, 0, 4], 
                           [2, 4, 0]],
-    "workload_on_source_matrix" : [[1000000000, 0, 0], [0, 0, 0]],
+    "workload_on_source_matrix" : [[100, 0, 0], [1, 0, 0]],
     "node_memories": [
-        10, 100, 200
+        100, 100, 200
     ],
     "node_cores": [
-        1, 200, 50
+        100, 200, 50
     ],
     "gpu_node_names": [
     ],
@@ -33,7 +33,7 @@ input = {
         5, 3
     ],
     "function_max_delays": [
-        100, 100
+        10000000, 100000000
     ],
     "gpu_function_names": [
     ],

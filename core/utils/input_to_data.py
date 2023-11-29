@@ -136,7 +136,11 @@ def setup_runtime_data(data, input):
     
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
     data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
-    data.cores_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    cores_matrix = input.get('node_cores', None)
+    if cores_matrix:
+        data.cores_matrix = cores_matrix
+    else: 
+        data.cores_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
     data.response_time_matrix = [[0 for _ in data.nodes] for _ in data.functions]
     data.gpu_response_time_matrix = [[1 for _ in data.gpu_nodes] for _ in data.gpu_functions]
     data.old_cpu_allocations = np.array([[0 for _ in data.nodes] for _ in data.functions])
