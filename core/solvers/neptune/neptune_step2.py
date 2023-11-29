@@ -28,7 +28,6 @@ class NeptuneStep2Base(NeptuneStepBase):
             constrain_deletions(self.data, self.solver, self.c, self.allocated, self.deallocated)
         elif self.mode == "create":
             constrain_creations(self.data, self.solver, self.c, self.allocated, self.deallocated)
-        constrain_score(self.data, self.solver, self.x, self.n, self.alpha)
 
     def init_objective(self):
         minimize_disruption(self.data, self.objective, self.moved_from, self.moved_to, self.allocated, self.deallocated)
@@ -57,6 +56,7 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
         super().init_constraints()
         constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
         constrain_node_utilization(self.data, self.solver, self.n)
+        constrain_score(self.data, self.solver, self.x, self.n, self.alpha)
         constrain_budget(self.data, self.solver, self.n)
 
     def results(self):

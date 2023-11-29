@@ -2,43 +2,42 @@ import requests
 import pprint
 
 input = {
-
+    "with_db" : False,
     "solver": {
         "type": "NeptuneMinDelay",
-        "args": {"alpha": 0.0, "verbose": False}
+        "args": {"alpha": 0.0, "verbose": True}
     },
-
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [
-        "node_a", "node_b", "node_c", "node_d", "gpu_node_e"
+        "node_a", "node_b", "node_c"
     ],
+    "node_delay_matrix": [[0, 3, 2], 
+                          [3, 0, 4], 
+                          [2, 4, 0]],
+    "workload_on_source_matrix" : [[1000000000, 0, 0], [0, 0, 0]],
     "node_memories": [
-        40, 40, 30, 30, 30
+        10, 100, 200
     ],
     "node_cores": [
-        10, 10, 10, 10, 10
+        1, 200, 50
     ],
     "gpu_node_names": [
-        "gpu_node_e"
     ],
     "gpu_node_memories": [
-        100
     ],
     "function_names": [
-        "ns/fn_1", "ns/fn_2", "ns/fn_3", "ns/gpu_fn_4"
+        "ns/fn_1", "ns/fn_2"
     ],
     "function_memories": [
-        10, 10, 10, 10
+        5, 3
     ],
     "function_max_delays": [
-        100, 100, 100, 100
+        100, 100
     ],
     "gpu_function_names": [
-        "ns/gpu_fn_4"
     ],
     "gpu_function_memories": [
-        50
     ],
     "actual_cpu_allocations": {
         "ns/fn_1": {
@@ -50,16 +49,6 @@ input = {
             # "node_d": True,
             "node_b": True,
             "node_c": True
-        },
-        "ns/fn_3": {
-            "node_b": True,
-            # "node_d": True,
-            # "node_c": True
-        },
-        "ns/gpu_fn_4": {
-            # "node_a": True,
-            "node_b": True,
-            # "node_d": True
         }
     },
     "actual_gpu_allocations": {

@@ -72,7 +72,7 @@ def check_input(schedule_input):
 def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     aux_data = Data()
     setup_community_data(input, aux_data)
-    setup_runtime_data(aux_data)
+    setup_runtime_data(aux_data, input)
     create_mappings(aux_data)
     if with_db:
         update_data_from_db(aux_data)
@@ -120,10 +120,20 @@ def setup_community_data(input, data):
     data.max_delay_matrix = [1000 for _ in range(len(data.function_memories))]
 
 
-def setup_runtime_data(data):
-    data.node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.nodes]
+def setup_runtime_data(data, input):
+    node_delay_matrix = input.get('node_delay_matrix', None)
+    if node_delay_matrix:
+        data.node_delay_matrix = node_delay_matrix
+    else: 
+        data.node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.nodes]
     data.gpu_node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.gpu_nodes]
-    data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
+    workload_on_source_matrix = input.get('workload_on_source_matrix', None)
+    if workload_on_source_matrix:
+         data.workload_on_source_matrix = workload_on_source_matrix
+    else:
+        data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
     data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
     data.cores_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
