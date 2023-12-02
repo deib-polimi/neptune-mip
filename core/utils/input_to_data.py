@@ -130,12 +130,18 @@ def setup_runtime_data(data, input):
     
     workload_on_source_matrix = input.get('workload_on_source_matrix', None)
     if workload_on_source_matrix:
-         data.workload_on_source_matrix = workload_on_source_matrix
+         data.workload_on_source_matrix = np.array(workload_on_source_matrix)
     else:
         data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
     
+    workload_on_destination_matrix = input.get('workload_on_destination_matrix', None)
+    if workload_on_destination_matrix:
+         data.workload_on_destination_matrix = np.array(workload_on_destination_matrix)
+    else:
+        data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
-    data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+
     cores_matrix = input.get('node_cores', None)
     if cores_matrix:
         data.cores_matrix = cores_matrix

@@ -23,7 +23,6 @@ def constrain_node_utilization(data, solver, n):
         if alpha == 0.0: return
     except:
         pass
-    print("NODE UTIL")
     solver.Add(
         solver.Sum([
             n[i]

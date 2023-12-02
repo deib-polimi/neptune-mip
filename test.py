@@ -5,8 +5,9 @@ input = {
     "with_db" : False,
     "solver": {
         "type": "NeptuneMinDelay",
-        "args": {"alpha": 0.0, "verbose": True}
+        "args": {"alpha": 0.1, "verbose": True}
     },
+    "cpu_coeff" : 1,
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [
@@ -20,7 +21,7 @@ input = {
         100, 100, 200
     ],
     "node_cores": [
-        100, 200, 50
+        100, 50, 50
     ],
     "gpu_node_names": [
     ],
@@ -33,7 +34,7 @@ input = {
         5, 3
     ],
     "function_max_delays": [
-        10000000, 100000000
+        1000, 1000
     ],
     "gpu_function_names": [
     ],
@@ -41,19 +42,21 @@ input = {
     ],
     "actual_cpu_allocations": {
         "ns/fn_1": {
-            "node_a": True,
-            # "node_b": True,
-            # "node_c": True
+            "node_a": False,
+             "node_b": False,
+             "node_c": False
         },
         "ns/fn_2": {
-            # "node_d": True,
-            "node_b": True,
-            "node_c": True
+            "node_a": False,
+            "node_b": False,
+            "node_c": False
         }
     },
     "actual_gpu_allocations": {
     }
 }
+
+input["workload_on_destination_matrix"] = [input["node_cores"]] * len(input["function_names"]) # allows workload_on_source_matrix to be the actual workload used in the optimization problem
 
 response = requests.request(method='get', url="http://localhost:5000/", json=input)
 

@@ -11,7 +11,7 @@ class NeptuneStepBase(Solver):
         init_x(self.data, self.solver, self.x)
         init_c(self.data, self.solver, self.c)
 
-    def init_constraints(self):
+    def init_constraints(self): 
         constrain_c_according_to_x(self.data, self.solver, self.c, self.x)
         constrain_memory_usage(self.data, self.solver, self.c)
 

@@ -23,9 +23,9 @@ class NeptuneBase(Solver):
         self.solved = self.step2_delete.solve()
         self.step2_x, self.step2_c = self.step2_delete.results()
         if not self.solved:
-            self.step2_create.load_data(self.data)
-            self.solved = self.step2_create.solve()
-            self.step2_x, self.step2_c = self.step2_create.results()
+           self.step2_create.load_data(self.data)
+           self.solved = self.step2_create.solve()
+           self.step2_x, self.step2_c = self.step2_create.results()
         return self.solved
     
     def results(self): 
