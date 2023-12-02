@@ -42,14 +42,14 @@ input = {
     ],
     "actual_cpu_allocations": {
         "ns/fn_1": {
-            "node_a": False,
+            "node_a": True,
              "node_b": False,
              "node_c": False
         },
         "ns/fn_2": {
             "node_a": False,
             "node_b": False,
-            "node_c": False
+            "node_c": True
         }
     },
     "actual_gpu_allocations": {
