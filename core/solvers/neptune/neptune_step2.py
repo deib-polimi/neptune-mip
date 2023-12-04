@@ -46,7 +46,6 @@ class NeptuneStep2Base(NeptuneStepBase):
         print(-self.allocated.solution_value())
         return x, c
 
-
 class NeptuneStep2MinUtilization(NeptuneStep2Base):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

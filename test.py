@@ -4,7 +4,7 @@ import pprint
 input = {
     "with_db": False,
     "solver": {
-        "type": "NeptuneMinDelayAndUtilization",
+        "type": "NeptuneMinDelay",
         "args": {"alpha": 0.0, "verbose": True}
     },
     "cpu_coeff": 1,
@@ -43,12 +43,12 @@ input = {
     "actual_cpu_allocations": {
         "ns/fn_1": {
             "node_a": True,
-            "node_b": False,
-            "node_c": False,
+            "node_b": True,
+            "node_c": True,
         },
         "ns/fn_2": {
             "node_a": True,
-            "node_b": False,
+            "node_b": True,
             "node_c": True,
         }
     },
