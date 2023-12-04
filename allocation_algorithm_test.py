@@ -22,6 +22,8 @@ for solver_type in [
                 "type": solver_type,
                 "args": {"alpha": 0.0, "verbose": False}
             },
+            "with_db": False,
+            "cpu_coeff": 1,
             "community": "community-test",
             "namespace": "namespace-test",
             "node_names": [
@@ -277,6 +279,6 @@ for solver_type in [
         },
     ]
 
-    for input_request in inputs[-2:]:
+    for input_request in inputs:
         response = requests.request(method='get', url="http://localhost:5000/", json=input_request)
         pprint.pprint(response.json())

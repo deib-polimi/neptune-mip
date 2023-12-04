@@ -143,7 +143,7 @@ def setup_runtime_data(data, input):
     
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
 
-    cores_matrix = input.get('node_cores', None)
+    cores_matrix = input.get('cores_matrix', None)
     if cores_matrix:
         data.cores_matrix = cores_matrix
     else: 
@@ -206,8 +206,6 @@ def update_data_from_db(data):
     print(f"RESPONSE TIME \n\n {rt_df}")
     print(f"DELAYS \n\n {dl_df}")
     print(f"CPU CONSUMPTION \n\n {cpu_df}")
-
-    print(data.workload_on_destination_matrix)
    
     for node, func, response_time, gpu in zip(rt_df['destination'], rt_df['function'], rt_df['response_time'],
                                               rt_df['gpu']):

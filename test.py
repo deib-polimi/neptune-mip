@@ -4,8 +4,8 @@ import pprint
 input = {
     "with_db": False,
     "solver": {
-        "type": "NeptuneMinDelay",
-        "args": {"alpha": 1, "verbose": True}
+        "type": "NeptuneMinDelayAndUtilization",
+        "args": {"alpha": 0.0, "verbose": True}
     },
     "cpu_coeff": 1,
     "community": "community-test",
@@ -53,11 +53,11 @@ input = {
         }
     },
     "actual_gpu_allocations": {
-    }
+    },
 }
 
-input["workload_on_destination_matrix"] = [input["node_cores"]] * len(input[
-                                                                          "function_names"])  # allows workload_on_source_matrix to be the actual workload used in the optimization problem
+input["cores_matrix"] = [[1,1,1]] * len(input["function_names"])
+input["workload_on_destination_matrix"] = [[1,1,1]] * len(input["function_names"])
 
 response = requests.request(method='get', url="http://localhost:5000/", json=input)
 
