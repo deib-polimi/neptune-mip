@@ -100,5 +100,6 @@ def constrain_GPU_usage(data, solver, x):
 
 
 def constrain_budget(data, solver, n):
+    print(data.node_budget)
     for j in range(len(data.nodes)):
         solver.Add(n[j] * data.node_costs[j] <= data.node_budget)

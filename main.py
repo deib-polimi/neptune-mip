@@ -39,6 +39,7 @@ def serve():
     with_db = input.get("with_db", True)
 
     solver = eval(solver_type)(**solver_args)
+    print(solver)
     solver.load_data(data_to_solver_input(input, with_db=with_db, cpu_coeff=input.get("cpu_coeff", 1.3)))
     solver.solve()
     x, c = solver.results()

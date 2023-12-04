@@ -18,8 +18,10 @@ class NeptuneStep2Base(NeptuneStepBase):
         self.deallocated = init_deallocated(self.data, self.solver)
 
     def init_constraints(self):
-        self.log("INTERSTESING")
         self.log(self.data.old_allocations_matrix)
+        self.log(self.data.core_per_req_matrix)
+        self.log(self.data.workload_matrix)
+        self.log(self.data.node_cores_matrix)
         super().init_constraints()
         constrain_handle_all_requests(self.data, self.solver, self.x)
         constrain_CPU_usage(self.data, self.solver, self.x)

@@ -34,12 +34,21 @@ def constrain_node_utilization(data, solver, n):
 def constrain_network_delay(data, solver, x, coeff):
     try:
         alpha = data.alpha
-        if alpha == 1.0: return
+        if alpha == 1.0:
+            return
 
     except:
         pass
 
     vals = itertools.product(range(len(data.sources)),
+                             range(len(data.functions)),
+                             range(len(data.nodes)))
+
+    vals2 = itertools.product(range(len(data.sources)),
+                             range(len(data.functions)),
+                             range(len(data.nodes)))
+
+    vals3 = itertools.product(range(len(data.sources)),
                              range(len(data.functions)),
                              range(len(data.nodes)))
 
@@ -49,8 +58,10 @@ def constrain_network_delay(data, solver, x, coeff):
             for i, f, j in vals
         ]) <= coeff * np.sum(
             [float(data.node_delay_matrix[i, j] * data.workload_matrix[f, i] * data.prev_x[i, f, j]) for i, f, j in
-             vals])
+             vals2])
     )
+    print(
+        f"------------ MAX SUM DELAY {[float(data.node_delay_matrix[i, j] * data.workload_matrix[f, i] * data.prev_x[i, f, j]) for i, f, j in vals3]}")
 
 
 def constrain_migrations(data, solver, c, allocated, deallocated):
@@ -98,6 +109,13 @@ def constrain_score(data, solver, x, n, alpha):
     func_matrix = np.vstack([max_func_delay for _ in range(len(data.nodes))])
     node_matrix = np.vstack([max_node_delay for _ in range(len(data.functions))])
     max_delay_matrix = np.maximum(func_matrix, node_matrix.T)
+    print(func_matrix)
+    print(node_matrix)
+    print(max_delay_matrix)
+    print(f"max score: {data.max_score}")
+    for i, f, j in itertools.product(range(len(data.nodes)), range(len(data.functions)),
+                          range(len(data.nodes))):
+        print((1 - alpha) * data.workload_matrix[f, i] * data.node_delay_matrix[i, j] / max_delay_matrix[i, f])
     solver.Add(
         solver.Sum([n[i] * float(alpha / (len(data.nodes))) for i in range(len(data.nodes))]) +
         solver.Sum([x[i, f, j] * float(
