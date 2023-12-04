@@ -10,7 +10,15 @@ This repository has been dockerized. It's possible to run a plug&play image at `
 
 To build a new Docker image, run:
 ```
-docker build -t {REPO}/{IMAGE}:{TAG} .
-docker push {REPO}/{IMAGE}:{TAG}
+docker build -t {IMAGE}:{TAG} .
 ```
 
+Run the container:
+```
+docker run -it -p 5000:5000 {IMAGE}:{TAG} 
+```
+
+To run the test, execute in another terminal:
+```
+python test.py
+```
