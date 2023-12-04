@@ -14,7 +14,6 @@ def constrain_c_according_to_x(data, solver, c, x):
                     x[i, f, j] for i in range(len(data.sources))
                 ]) + epsilon >= c[f, j] )
 
-
 # The sum of the memory of functions deployed on a node is less than its capacity
 def constrain_memory_usage(data, solver, c):
     for j in range(len(data.nodes)):
@@ -100,6 +99,5 @@ def constrain_GPU_usage(data, solver, x):
 
 
 def constrain_budget(data, solver, n):
-    print(data.node_budget)
     for j in range(len(data.nodes)):
         solver.Add(n[j] * data.node_costs[j] <= data.node_budget)

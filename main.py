@@ -49,7 +49,7 @@ def serve():
         response=json.dumps({
             "cpu_routing_rules": x,
             "cpu_allocations": c,
-           "gpu_routing_rules": {},
+            "gpu_routing_rules": {},
             "gpu_allocations": {},
             "score" : score
         }),

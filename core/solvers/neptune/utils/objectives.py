@@ -43,11 +43,8 @@ def minimize_node_delay_and_utilization(data, objective, n, x, alpha):
                     delay = data.node_delay_matrix[i, j]
                     if total_workload:
                         max_workload_delay = min(max_func_delay, max_node_delay) * np.sum(workload)
-                        if max_workload_delay == 0:
-                            objective.SetCoefficient(x[i, f, j], float((1 - alpha) * workload * delay / 1000000))
-                        else:
+                        if max_workload_delay != 0:
                             objective.SetCoefficient(x[i, f, j], float((1 - alpha) * workload * delay / max_workload_delay))
-    # objective.SetOffset(offset_util)
     objective.SetMinimization()
 
 

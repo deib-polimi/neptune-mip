@@ -7,14 +7,12 @@ RUN apt install nano -y
 RUN apt install vim -y
 RUN apt install screen -y
 RUN apt install curl -y
-
 RUN apt install git -y
 RUN apt install gcc g++ build-essential -y
 RUN apt install libopencv-dev -y
 RUN apt install cmake protobuf-compiler -y
 RUN apt install libopenblas-dev  -y
 RUN apt install python3-pyproj -y
-
 
 COPY requirements.txt .
 
