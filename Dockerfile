@@ -12,6 +12,7 @@ RUN apt install gcc g++ build-essential -y
 RUN apt install libopencv-dev -y
 RUN apt install cmake protobuf-compiler -y
 RUN apt install libopenblas-dev  -y
+RUN apt install python3-pyproj -y
 
 COPY requirements.txt .
 
@@ -29,6 +30,8 @@ WORKDIR /usr/src/app/
 COPY *.py ./
 COPY *.sh ./
 COPY core ./core
+
 RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
+

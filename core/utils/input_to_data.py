@@ -72,10 +72,11 @@ def check_input(schedule_input):
 def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     aux_data = Data()
     setup_community_data(input, aux_data)
-    setup_runtime_data(aux_data)
+    setup_runtime_data(aux_data, input)
     create_mappings(aux_data)
     if with_db:
-        update_old_allocations(aux_data)
+        update_data_from_db(aux_data)
+    update_old_allocations(aux_data)
 
 
     data = Data(aux_data.nodes, aux_data.nodes, aux_data.functions)
@@ -119,13 +120,33 @@ def setup_community_data(input, data):
     data.max_delay_matrix = [1000 for _ in range(len(data.function_memories))]
 
 
-def setup_runtime_data(data):
-    data.node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.nodes]
+def setup_runtime_data(data, input):
+    node_delay_matrix = input.get('node_delay_matrix', None)
+    if node_delay_matrix:
+        data.node_delay_matrix = node_delay_matrix
+    else: 
+        data.node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.nodes]
     data.gpu_node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.gpu_nodes]
-    data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
+    workload_on_source_matrix = input.get('workload_on_source_matrix', None)
+    if workload_on_source_matrix:
+         data.workload_on_source_matrix = np.array(workload_on_source_matrix)
+    else:
+        data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
+    workload_on_destination_matrix = input.get('workload_on_destination_matrix', None)
+    if workload_on_destination_matrix:
+         data.workload_on_destination_matrix = np.array(workload_on_destination_matrix)
+    else:
+        data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+    
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
-    data.workload_on_destination_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
-    data.cores_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
+
+    cores_matrix = input.get('cores_matrix', None)
+    if cores_matrix:
+        data.cores_matrix = cores_matrix
+    else: 
+        data.cores_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
     data.response_time_matrix = [[0 for _ in data.nodes] for _ in data.functions]
     data.gpu_response_time_matrix = [[1 for _ in data.gpu_nodes] for _ in data.gpu_functions]
     data.old_cpu_allocations = np.array([[0 for _ in data.nodes] for _ in data.functions])
@@ -162,20 +183,20 @@ def update_data_from_db(data):
     interval = "'30 seconds'"
     cnx = create_engine(postgres_str)
     ar_df = pd.read_sql(
-        sql=f"SELECT function, source, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, source ",
+        sql=f"SELECT function, source, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, source ",
         con=cnx)
     ard_df = pd.read_sql(
-        sql=f"SELECT function, destination, gpu, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, destination, gpu",
+        sql=f"SELECT function, destination, gpu, count(*) AS arrival_rate FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, destination, gpu",
         con=cnx)
     rt_df = pd.read_sql(
-        sql=f"SELECT function, destination, gpu, avg(latency) AS response_time FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, destination, gpu ",
+        sql=f"SELECT function, destination, gpu, avg(latency) AS response_time FROM metric WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, destination, gpu ",
         con=cnx)
     dl_df = pd.read_sql(
         sql=f"SELECT f,t,l FROM (SELECT from_node, to_node FROM ping GROUP BY from_node, to_node) as p1 INNER JOIN LATERAL (SELECT from_node as f, to_node as t, avg_latency as l FROM ping p2 WHERE p1.from_node = p2.from_node AND p1.to_node = p2.to_node ORDER BY timestamp DESC LIMIT 1) AS data ON true",
         con=cnx
     )
     cpu_df = pd.read_sql(
-        sql=f"SELECT function, node, avg(cores) AS cores FROM resource WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{namespace}' AND community = '{community}' GROUP BY function, node",
+        sql=f"SELECT function, node, avg(cores) AS cores FROM resource WHERE timestamp > now() - INTERVAL {interval} AND namespace = '{data.namespace}' AND community = '{data.community}' GROUP BY function, node",
         con=cnx
     )
 
@@ -184,8 +205,6 @@ def update_data_from_db(data):
     print(f"RESPONSE TIME \n\n {rt_df}")
     print(f"DELAYS \n\n {dl_df}")
     print(f"CPU CONSUMPTION \n\n {cpu_df}")
-
-    print(data.workload_on_destination_matrix)
    
     for node, func, response_time, gpu in zip(rt_df['destination'], rt_df['function'], rt_df['response_time'],
                                               rt_df['gpu']):
@@ -223,7 +242,7 @@ def update_old_allocations(data):
                 func = function_key.split("/")[1]
                 data.old_cpu_allocations[data.func_map[func]][data.node_map[node]] = ok
 
-    core_per_req_matrix = np.nan_to_num(data.cores_matrix / data.workload_on_destination_matrix, nan=0)
+    data.core_per_req_matrix = np.nan_to_num(data.cores_matrix / data.workload_on_destination_matrix, nan=0)
 
     data.old_cpu_allocations = np.array(data.old_cpu_allocations, dtype=bool).astype(int)
     if data.old_cpu_allocations.sum() == 0:

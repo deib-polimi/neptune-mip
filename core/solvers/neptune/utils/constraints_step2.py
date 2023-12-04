@@ -23,7 +23,6 @@ def constrain_node_utilization(data, solver, n):
         if alpha == 0.0: return
     except:
         pass
-    print("NODE UTIL")
     solver.Add(
         solver.Sum([
             n[i]
@@ -35,14 +34,15 @@ def constrain_node_utilization(data, solver, n):
 def constrain_network_delay(data, solver, x, coeff):
     try:
         alpha = data.alpha
-        if alpha == 1.0: return
+        if alpha == 1.0:
+            return
 
     except:
         pass
 
-    vals = itertools.product(range(len(data.sources)),
+    vals = list(itertools.product(range(len(data.sources)),
                              range(len(data.functions)),
-                             range(len(data.nodes)))
+                             range(len(data.nodes))))
 
     solver.Add(
         solver.Sum([

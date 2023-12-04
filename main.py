@@ -36,16 +36,22 @@ def serve():
     solver = input.get("solver", {'type': 'NeptuneMinDelayAndUtilization'})
     solver_type = solver.get("type")
     solver_args = solver.get("args", {})
+    with_db = input.get("with_db", True)
+
     solver = eval(solver_type)(**solver_args)
-    solver.load_data(data_to_solver_input(input))
+    print(solver)
+    solver.load_data(data_to_solver_input(input, with_db=with_db, cpu_coeff=input.get("cpu_coeff", 1.3)))
     solver.solve()
     x, c = solver.results()
+    score = solver.score()
+    print("INTER", score)
     response = app.response_class(
         response=json.dumps({
             "cpu_routing_rules": x,
             "cpu_allocations": c,
             "gpu_routing_rules": {},
             "gpu_allocations": {},
+            "score" : score
         }),
         status=200,
         mimetype='application/json'

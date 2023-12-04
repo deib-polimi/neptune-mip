@@ -35,7 +35,8 @@ class Solver:
     def solve(self):
         self.init_objective()
         status = self.solver.Solve()
-        self.log(f"Problem solved with status {status}")
+        value = self.solver.Objective().Value()
+        self.log(f"Problem solved with status {status} and value {value}")
         return status == pywraplp.Solver.OPTIMAL
 
     def results(self):
