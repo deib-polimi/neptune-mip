@@ -62,7 +62,6 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
     def init_constraints(self):
         super().init_constraints()
         constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
-        constrain_node_utilization(self.data, self.solver, self.n)
         constrain_budget(self.data, self.solver, self.n)
         constrain_node_utilization(self.data, self.solver, self.n, self.soften_step1_sol)
 
@@ -88,5 +87,7 @@ class NeptuneStep2MinDelayAndUtilization(NeptuneStep2MinUtilization):
         self.alpha = alpha
 
     def init_constraints(self):
-        super().init_constraints()
+        NeptuneStep2Base.init_constraints(self)
+        constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
+        constrain_budget(self.data, self.solver, self.n)
         constrain_score(self.data, self.solver, self.x, self.n, self.alpha, self.soften_step1_sol)
