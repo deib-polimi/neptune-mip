@@ -31,7 +31,7 @@ def constrain_node_utilization(data, solver, n):
 
 
 # Find a solution with the similar network delay
-def constrain_network_delay(data, solver, x, coeff):
+def constrain_network_delay(data, solver, x, soften_step1_sol):
     try:
         alpha = data.alpha
         if alpha == 1.0:
@@ -48,7 +48,7 @@ def constrain_network_delay(data, solver, x, coeff):
         solver.Sum([
             x[i, f, j] * float(data.node_delay_matrix[i, j] * data.workload_matrix[f, i])
             for i, f, j in vals
-        ]) <= coeff * np.sum(
+        ]) <= soften_step1_sol * np.sum(
             [float(data.node_delay_matrix[i, j] * data.workload_matrix[f, i] * data.prev_x[i, f, j]) for i, f, j in
              vals])
     )
@@ -93,7 +93,14 @@ def constrain_creations(data, solver, c, allocated, deallocated):
     )
 
 
-def constrain_score(data, solver, x, n, alpha):
+
+def constrain_node_utilization(data, solver, n, soften_step1_sol):
+    solver.Add(
+        solver.Sum([n[i] for i in range(len(data.nodes))])  <= data.max_score * soften_step1_sol) 
+       
+
+
+def constrain_score(data, solver, x, n, alpha, soften_step1_sol):
     max_func_delay = data.max_delay_matrix
     max_node_delay = data.node_delay_matrix.max(axis=0)
     func_matrix = np.vstack([max_func_delay for _ in range(len(data.nodes))])
@@ -105,5 +112,5 @@ def constrain_score(data, solver, x, n, alpha):
             (1 - alpha) * data.workload_matrix[f, i] * data.node_delay_matrix[i, j] / max_delay_matrix[i, f]) for
                     i, f, j in
                     itertools.product(range(len(data.nodes)), range(len(data.functions)),
-                                      range(len(data.nodes)))]) <= data.max_score * 1.3
+                                      range(len(data.nodes)))]) <= data.max_score * soften_step1_sol
     )
