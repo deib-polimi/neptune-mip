@@ -3,12 +3,12 @@ from .neptune_step1 import *
 
 
 class NeptuneStep2Base(NeptuneStepBase):
-    def __init__(self, mode=str, alpha=0.5, **kwargs):
+    def __init__(self, mode=str, soften_step1_sol=1.3, **kwargs):
         super().__init__(**kwargs)
         self.mode = mode
         assert mode in ["delete", "create"]
         self.moved_from, self.moved_to = {}, {}
-        self.alpha = alpha
+        self.soften_step1_sol = soften_step1_sol
 
     def init_vars(self):
         super().init_vars()
@@ -62,9 +62,8 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
     def init_constraints(self):
         super().init_constraints()
         constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
-        constrain_node_utilization(self.data, self.solver, self.n)
-        constrain_score(self.data, self.solver, self.x, self.n, self.alpha)
         constrain_budget(self.data, self.solver, self.n)
+        constrain_node_utilization(self.data, self.solver, self.n, self.soften_step1_sol)
 
     def results(self):
         x, c = super().results()
@@ -74,20 +73,21 @@ class NeptuneStep2MinUtilization(NeptuneStep2Base):
 
 
 class NeptuneStep2MinDelay(NeptuneStep2Base):
-    def __init__(self, delay_coeff=1.3, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.delay_coeff = delay_coeff
 
     def init_constraints(self):
         super().init_constraints()
-        constrain_network_delay(self.data, self.solver, self.x, self.delay_coeff)
+        constrain_network_delay(self.data, self.solver, self.x, self.soften_step1_sol)
 
 
 class NeptuneStep2MinDelayAndUtilization(NeptuneStep2MinUtilization):
-    def __init__(self, delay_coeff=1.3, **kwargs):
+    def __init__(self, alpha=0.5, **kwargs):
         super().__init__(**kwargs)
-        self.delay_coeff = delay_coeff
+        self.alpha = alpha
 
     def init_constraints(self):
-        super().init_constraints()
-        constrain_network_delay(self.data, self.solver, self.x, self.delay_coeff)
+        NeptuneStep2Base.init_constraints(self)
+        constrain_n_according_to_c(self.data, self.solver, self.n, self.c)
+        constrain_budget(self.data, self.solver, self.n)
+        constrain_score(self.data, self.solver, self.x, self.n, self.alpha, self.soften_step1_sol)

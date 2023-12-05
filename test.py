@@ -4,8 +4,8 @@ import pprint
 input = {
     "with_db": False,
     "solver": {
-        "type": "NeptuneMinDelay",
-        "args": {"alpha": 0.0, "verbose": True}
+        "type": "NeptuneMinDelayAndUtilization",
+        "args": {"alpha": 1, "verbose": True, "soften_step1_sol": 1.3}
     },
     "cpu_coeff": 1,
     "community": "community-test",
