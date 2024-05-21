@@ -40,7 +40,7 @@ def serve():
 
     solver = eval(solver_type)(**solver_args)
     print(solver)
-    solver.load_data(data_to_solver_input(input, with_db=with_db, workload_coeff=input.get("workload_coeff", 1)))
+    solver.load_data(data_to_solver_input(input, with_db=with_db, workload_coeff=input.get("workload_coeff", 1))) 
     solver.solve()
     x, c = solver.results()
     score = solver.score()

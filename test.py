@@ -59,6 +59,6 @@ input = {
 input["cores_matrix"] = [[1,1,1]] * len(input["function_names"])
 input["workload_on_destination_matrix"] = [[1,1,1]] * len(input["function_names"])
 
-response = requests.request(method='get', url="http://localhost:5001/", json=input)
+response = requests.request(method='get', url="http://localhost:5000/", json=input)
 
 pprint.pprint(response.json())
