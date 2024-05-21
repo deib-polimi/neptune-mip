@@ -5,7 +5,7 @@ def constrain_coverage(data, model, x):
                     model.Add(x[j, r]==0) 
 
 def constrain_proximity(data, model, x):
-    for i in range(len(data.sources)):
+    for i in range(len(data.nodes)):
         for r in range(data.requests_received):
             for f in range(len(data.functions)):
                 for j in range(len(data.nodes)):

@@ -79,7 +79,7 @@ def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     update_old_allocations(aux_data)
 
 
-    data = Data(aux_data.nodes, aux_data.nodes, aux_data.functions)
+    data = Data(aux_data.nodes, aux_data.functions)
     data.node_memory_matrix = np.array(aux_data.node_memories)
     data.function_memory_matrix = np.array(aux_data.function_memories)
     data.node_delay_matrix = np.array(aux_data.node_delay_matrix)

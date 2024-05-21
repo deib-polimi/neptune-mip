@@ -7,11 +7,11 @@ def constrain_c_according_to_x(data, solver, c, x):
         for j in range(len(data.nodes)):
             solver.Add(
                 solver.Sum([
-                    x[i, f, j] for i in range(len(data.sources))
+                    x[i, f, j] for i in range(len(data.nodes))
                 ]) <= c[f, j] * M)
             solver.Add(
                 solver.Sum([
-                    x[i, f, j] for i in range(len(data.sources))
+                    x[i, f, j] for i in range(len(data.nodes))
                 ]) + epsilon >= c[f, j] )
 
 # The sum of the memory of functions deployed on a node is less than its capacity
@@ -27,7 +27,7 @@ def constrain_memory_usage(data, solver, c):
 def constrain_handle_all_requests(data, solver, x, eq=True):
     op = lambda x: x == 1 if eq else lambda x: x <= 1
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             solver.Add(
                 op(solver.Sum([
                     x[i, f, j] for j in range(len(data.nodes))
@@ -37,7 +37,7 @@ def constrain_handle_all_requests(data, solver, x, eq=True):
 # All requests except the ones managed by GPUs in a node are rerouted somewhere else
 def constrain_handle_only_remaining_requests(data, solver, x):
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             solver.Add(
                 solver.Sum([
                     x[i, f, j] for j in range(len(data.nodes))
@@ -60,7 +60,7 @@ def constrain_CPU_usage(data, solver, x):
             solver.Sum([
                 x[i, f, j] * data.workload_matrix[f, i] * data.core_per_req_matrix[f, j] for f in
                 range(len(data.functions)) for i in
-                range(len(data.sources))
+                range(len(data.nodes))
             ]) <= data.node_cores_matrix[j]
         )
 
@@ -94,7 +94,7 @@ def constrain_GPU_usage(data, solver, x):
             solver.Add(
                 solver.Sum([
                     x[i, f, j] * data.workload_matrix[f, i] * data.response_time_matrix[f, j] for i in
-                    range(len(data.sources))
+                    range(len(data.nodes))
                 ]) <= 1000)
 
 

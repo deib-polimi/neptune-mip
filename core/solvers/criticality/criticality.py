@@ -36,4 +36,4 @@ class CriticalityHeuristic(Criticality):
 
     def results(self):
         x, c = output_x_and_c(self.data, None, self.c_fj, self.x_jr)
-        return convert_x_matrix(x, self.data.nodes, self.data.functions, self.data.nodes), convert_c_matrix(c, self.data.functions, self.data.nodes)
+        return convert_x_matrix(x, self.data.nodes, self.data.functions), convert_c_matrix(c, self.data.functions, self.data.nodes)
