@@ -4,8 +4,7 @@ from typing import List
 
 class Data:
 
-    def __init__(self, sources: List[str] = None, nodes: List[str] = None, functions: List[str] = None):
-        self.sources = sources if sources else []
+    def __init__(self, nodes: List[str] = None, functions: List[str] = None):
         self.nodes = nodes if nodes else []
         self.functions = functions if functions else []
         self.node_memory_matrix: np.array = np.array([])

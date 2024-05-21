@@ -3,9 +3,9 @@ import json
 from collections import defaultdict
 
 def output_x_and_c(data, x, c):
-    x_matrix = np.empty(shape=(len(data.sources), len(data.functions), len(data.nodes)))
+    x_matrix = np.empty(shape=(len(data.nodes), len(data.functions), len(data.nodes)))
     for j in range(len(data.nodes)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             for f in range(len(data.functions)):
                 x_matrix[i][f][j] = x[i, f, j].solution_value()
     c_matrix = np.empty(shape=(len(data.functions), len(data.nodes)))
@@ -20,10 +20,10 @@ def output_n(data, n):
         n_matrix[j] = n[j].solution_value()
     return n_matrix
 
-def convert_x_matrix(matrix, sources, functions, nodes):
+def convert_x_matrix(matrix, nodes, functions):
     routings = defaultdict(lambda : defaultdict(lambda : defaultdict(float)))
-    assert matrix.shape == (len(sources), len(functions), len(nodes)), f"X matrix shape malformed. matrix shape is {matrix.shape} but it should be {(len(sources), len(functions), len(nodes))}"
-    for i, source in enumerate(sources):
+    assert matrix.shape == (len(nodes), len(functions), len(nodes)), f"X matrix shape malformed. matrix shape is {matrix.shape} but it should be {(len(nodes), len(functions), len(nodes))}"
+    for i, source in enumerate(nodes):
         for f, function in enumerate(functions):
             for j, destination in enumerate(nodes):
                 if matrix[i][f][j] > 0.001:

@@ -43,7 +43,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                                 #print("✓ memory constraint ")
                                 if sum(x_jr[j_temp,r_temp]*data.core_per_req_matrix[f_temp,j_temp]*data.req_distribution[f_temp,r_temp] for f_temp in range(len(data.functions)) for r_temp in data.requests_index)+data.core_per_req_matrix[f,j_temp]*data.req_distribution[f][r]<= data.node_cores_matrix[j_temp]: #core constraint
                                     #print("✓ core constraint ")
-                                    for i in range(len(data.sources)):
+                                    for i in range(len(data.nodes)):
                                         if data.node_delay_matrix[i,j_temp]<data.max_delay_matrix[f] and data.loc_arrival_r[i][r]==1 and data.req_distribution[f][r]==1: #delay constraint
                                             #print("✓ delay constraint, arrived to node: ", i)
                                             loc=1
@@ -58,7 +58,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                         if data.req_node_coverage[j][r]==1:
                             if (sum(data.function_memory_matrix[f_temp]*c_fj[f_temp,j] for f_temp in range(len(data.functions)))+data.function_memory_matrix[f])<=(data.node_memory_matrix[j]): # memory constraint
                                 if (sum(x_jr[j,r_temp]*data.core_per_req_matrix[f_temp,j]*data.req_distribution[f_temp,r_temp] for f_temp in range(len(data.functions)) for r_temp in data.requests_index)+data.core_per_req_matrix[f,j]*data.req_distribution[f][r])<=(data.node_cores_matrix[j]) : # core constraint
-                                    for i in range(len(data.sources)):
+                                    for i in range(len(data.nodes)):
                                         if data.node_delay_matrix[i,j]<data.max_delay_matrix[f] and data.loc_arrival_r[i][r]==1 and data.req_distribution[f][r]==1: # delay constraint
                                             loc=1
                                             x_jr[j][r]=1
@@ -75,7 +75,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                         if data.req_node_coverage[j_temp_active][r]==1 and loc==0: # Proximity constraint:
                             if sum(data.function_memory_matrix[f_temp]*c_fj[f_temp,j_temp_active] for f_temp in range(len(data.functions)))<=data.node_memory_matrix[j_temp_active]: # memory constraint
                                 if sum(x_jr[j_temp_active,r_temp]*data.core_per_req_matrix[f_temp,j_temp_active]*data.req_distribution[f_temp,r_temp] for f_temp in range(len(data.functions)) for r_temp in data.requests_index)+data.core_per_req_matrix[f,j_temp_active]*data.req_distribution[f][r]<= data.node_cores_matrix[j_temp_active]: #core constraint
-                                    for i in range(len(data.sources)):
+                                    for i in range(len(data.nodes)):
                                         if data.node_delay_matrix[i,j_temp_active]<data.max_delay_matrix[f] and data.loc_arrival_r[i][r]==1 and data.req_distribution[f][r]==1: # delay constraint
                                             loc=1
                                             x_jr[j_temp_active][r]=1
@@ -89,7 +89,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                             if data.req_node_coverage[j_temp_f][r]==1 and loc==0:
                                 if sum(data.function_memory_matrix[f_temp]*c_fj[f_temp,j_temp_f] for f_temp in range(len(data.functions)))+data.function_memory_matrix[f]<=data.node_memory_matrix[j_temp_f]: # memory constraint
                                     if sum(x_jr[j_temp_f,r_temp]*data.core_per_req_matrix[f_temp,j_temp_f]*data.req_distribution[f_temp,r_temp] for f_temp in range(len(data.functions)) for r_temp in data.requests_index)+data.core_per_req_matrix[f,j_temp_f]*data.req_distribution[f][r]<= data.node_cores_matrix[j_temp_f]: # core constraint
-                                        for i in range(len(data.sources)):
+                                        for i in range(len(data.nodes)):
                                             if data.node_delay_matrix[i,j_temp_f]<data.max_delay_matrix[f] and data.loc_arrival_r[i][r]==1 and data.req_distribution[f][r]==1: # delay constraint
                                                 loc=1
                                                 x_jr[j_temp_f][r]=1
@@ -103,7 +103,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                             if data.req_node_coverage[j][r]==1:
                                 if sum(data.function_memory_matrix[f_temp]*c_fj[f_temp,j] for f_temp in range(len(data.functions)))+data.function_memory_matrix[f]<=(data.node_memory_matrix[j]): # memory constraint
                                     if sum(x_jr[j,r_temp]*data.core_per_req_matrix[f_temp,j]*data.req_distribution[f_temp,r_temp] for f_temp in range(len(data.functions)) for r_temp in data.requests_index)+data.core_per_req_matrix[f,j]*data.req_distribution[f][r]<= (data.node_cores_matrix[j]): # core constraint
-                                        for i in range(len(data.sources)):
+                                        for i in range(len(data.nodes)):
                                             if data.node_delay_matrix[i,j]<data.max_delay_matrix[f] and data.loc_arrival_r[i][r]==1 and data.req_distribution[f][r]==1: # delay constraint
                                                 loc=1
                                                 x_jr[j][r]=1
@@ -127,7 +127,7 @@ def criticality_heuristic(data, log, S_active, y_j, c_fj, x_jr):
                     y_j[rand_node]=1
 
         if all(c_fj[f,:]==0): # when there are no requests
-            rand_node= np.random.choice(range(len(data.sources)))
+            rand_node= np.random.choice(range(len(data.nodes)))
             c_fj[f][rand_node]=1
             S_active[f][rand_node]=1
             y_j[rand_node]=1

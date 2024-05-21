@@ -69,7 +69,7 @@ def check_input(schedule_input):
 
     print("Everything seems consistent")
 
-def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
+def data_to_solver_input(input, workload_coeff, with_db=True):
     aux_data = Data()
     setup_community_data(input, aux_data)
     setup_runtime_data(aux_data, input)
@@ -79,11 +79,11 @@ def data_to_solver_input(input, cpu_coeff=1.3, with_db=True):
     update_old_allocations(aux_data)
 
 
-    data = Data(aux_data.nodes, aux_data.nodes, aux_data.functions)
+    data = Data(aux_data.nodes, aux_data.functions)
     data.node_memory_matrix = np.array(aux_data.node_memories)
     data.function_memory_matrix = np.array(aux_data.function_memories)
     data.node_delay_matrix = np.array(aux_data.node_delay_matrix)
-    data.workload_matrix = np.array(aux_data.workload_on_source_matrix) * cpu_coeff
+    data.workload_matrix = np.array(aux_data.workload_on_source_matrix) * workload_coeff
     data.max_delay_matrix = np.array(aux_data.max_delay_matrix)
     data.response_time_matrix = np.array(aux_data.response_time_matrix)
     data.node_cores_matrix = np.array(aux_data.node_cores)
