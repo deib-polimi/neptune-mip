@@ -11,8 +11,8 @@ def output_x_and_c(data, solver, c, x_jr):
     
     # Fill x matrix
     mat_mul = np.dot(data.req_distribution,np.transpose(x_jr))
-    x_matrix = np.empty(shape=(len(data.sources),len(data.functions),len(data.nodes)))
-    for i in range(len(data.sources)):
+    x_matrix = np.empty(shape=(len(data.nodes),len(data.functions),len(data.nodes)))
+    for i in range(len(data.nodes)):
         for j in range(len(data.nodes)):
             for f in range(len(data.functions)):
                 if sum(mat_mul[f])==0:

@@ -3,7 +3,7 @@ import numpy as np
 #TODO: check var name 
 def init_x(data, solver, x):
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             for j in range(len(data.nodes)):
                 x[i, f, j] = solver.NumVar(0, solver.infinity(), f"x[{i}][{f}][{j}]")
 

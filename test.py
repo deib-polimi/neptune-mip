@@ -7,7 +7,7 @@ input = {
         "type": "NeptuneMinDelayAndUtilization",
         "args": {"alpha": 1, "verbose": True, "soften_step1_sol": 1.3}
     },
-    "cpu_coeff": 1,
+    "workload_coeff": 1,
     "community": "community-test",
     "namespace": "namespace-test",
     "node_names": [

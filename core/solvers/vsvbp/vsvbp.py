@@ -70,7 +70,7 @@ class VSVBP(Solver):
     def results(self):
         xjr = output_xjr(self.data, self.solver, self.status, self.x, self.c, self.y)
         x, c = output_x_and_c(self.data, self.solver, self.c, xjr)
-        return convert_x_matrix(x, self.data.nodes, self.data.functions, self.data.nodes), convert_c_matrix(c, self.data.functions, self.data.nodes)
+        return (x, self.data.nodes, self.data.functions), convert_c_matrix(c, self.data.functions, self.data.nodes)
     
 
 

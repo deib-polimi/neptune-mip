@@ -55,7 +55,7 @@ def constrain_creations(data, solver, c, allocated, deallocated):
     )
 
 def constrain_network_delay(data, solver, x, soften_step1_sol):
-    vals = list(itertools.product(range(len(data.sources)),
+    vals = list(itertools.product(range(len(data.nodes)),
                              range(len(data.functions)),
                              range(len(data.nodes))))
 

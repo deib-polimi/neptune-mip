@@ -5,11 +5,10 @@ from .geo import *
 def prepare_requests(data):
     # Amount of request received in time-slot
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             data.workload_matrix[f][i]=round(data.workload_matrix[f][i])
     data.requests_received = int(np.sum(data.workload_matrix))
 
-    print("--------SOURCES_LEN [N]--------------",data.sources)
     print("--------NODES_LEN [N]--------------",data.nodes)
     print("--------REQUESTS [R]---------------",data.requests_received)
     print("--------M_F_LEN [F]---------------", len(data.function_memory_matrix))
@@ -24,13 +23,13 @@ def prepare_requests(data):
     data.req_by_user[data.row_indices, np.arange(data.matrix_size[1])] = 1
     
     # 1 if request r arrives to node i [N x R]
-    data.loc_arrival_r=np.zeros([int(len(data.sources)),int(data.requests_received)])
+    data.loc_arrival_r=np.zeros([int(len(data.nodes)),int(data.requests_received)])
 
 def prepare_req_distribution(data):
     data.req_distribution = np.zeros([int(len(data.functions)),int(data.requests_received)])
     r = 0
     while r<data.requests_received:
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             for f in range(len(data.functions)):
                 dif = data.workload_matrix[f][i]
                 while dif >0:
@@ -41,7 +40,7 @@ def prepare_req_distribution(data):
 
 # COVERAGE REQUEST-NODE
 def prepare_coverage(data):
-    for i in range(len(data.sources)):
+    for i in range(len(data.nodes)):
         node_latitude = data.node_coords[i,0]
         node_longitude = data.node_coords[i,1]
         temp = []

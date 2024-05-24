@@ -3,7 +3,7 @@ import numpy as np
 
 def minimize_network_delay(data, objective, x):
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             for j in range(len(data.nodes)):
                 objective.SetCoefficient(
                     x[i, f, j], float(data.node_delay_matrix[i, j] * data.workload_matrix[f, i])
@@ -13,7 +13,7 @@ def minimize_network_delay(data, objective, x):
 
 def maximize_handled_requests(data, objective, x):
     for f in range(len(data.functions)):
-        for i in range(len(data.sources)):
+        for i in range(len(data.nodes)):
             for j in range(len(data.nodes)):
                 objective.SetCoefficient(
                     x[i, f, j], float(data.workload_matrix[f, i])
@@ -36,7 +36,7 @@ def minimize_node_delay_and_utilization(data, objective, n, x, alpha):
     if total_workload:
         for f in range(len(data.functions)):
             max_func_delay = data.max_delay_matrix[f]
-            for i in range(len(data.sources)):
+            for i in range(len(data.nodes)):
                 max_node_delay = max(data.node_delay_matrix[i])
                 workload = data.workload_matrix[f, i]
                 for j in range(len(data.nodes)):

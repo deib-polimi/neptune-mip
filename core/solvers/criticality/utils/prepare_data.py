@@ -36,7 +36,7 @@ def prepare_live_position(data):
                 data.live_positions_requests.append(data.live_positions[0][u])
 
 def prepare_coverage_live(data):
-    for i in range(len(data.sources)):		       
+    for i in range(len(data.nodes)):		       
         node_latitude = data.node_coords[i,0]		            
         node_longitude = data.node_coords[i,1]		           
         temp = []		      
