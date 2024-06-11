@@ -47,7 +47,7 @@ def random_delays(num_nodes, seed=None):
     for i in range(num_nodes):
         matrix[i][i] = 0
 
-    draw_graph(G, seed=seed)
+    #draw_graph(G, seed=seed)
 
     return matrix
 

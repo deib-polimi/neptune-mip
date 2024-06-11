@@ -115,7 +115,7 @@ gv.display_function_table_matrix(input_data)
 print("\nTable location")
 gv.display_table_node_matrix(input_data)
 
-response = requests.request(method='get', url="http://localhost:5001/", json=input_data)
+response = requests.request(method='get', url="http://localhost:5000/", json=input_data)
 
 print("\nSolution found!")
 print("")
