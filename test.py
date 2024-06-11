@@ -20,6 +20,9 @@ input = {
     "node_memories": [
         100, 100, 200
     ],
+    "node_storage": [
+        1024, 1024, 2048
+    ],
     "node_cores": [
         100, 50, 50
     ],
@@ -54,10 +57,23 @@ input = {
     },
     "actual_gpu_allocations": {
     },
+    "tables_names": [
+        "table_a", "table_b"
+    ],
+    "tables_sizes": [
+        500, 200
+    ],
+    "v_old_matrix": [[1, 1],
+                     [1, 1],
+                     [1, 1]],
+    "write_per_req_matrix": [[1, 1],
+                            [1, 1]],
+    "read_per_req_matrix": [[1, 1],
+                            [1, 1]],
 }
 
-input["cores_matrix"] = [[1,1,1]] * len(input["function_names"])
-input["workload_on_destination_matrix"] = [[1,1,1]] * len(input["function_names"])
+input["cores_matrix"] = [[1, 1, 1]] * len(input["function_names"])
+input["workload_on_destination_matrix"] = [[1, 1, 1]] * len(input["function_names"])
 
 response = requests.request(method='get', url="http://localhost:5000/", json=input)
 

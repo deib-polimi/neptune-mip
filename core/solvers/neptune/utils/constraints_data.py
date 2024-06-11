@@ -1,5 +1,4 @@
-from fontTools.varLib.instancer import solver
-from ...neptune.utils.constraints_step1 import *
+from .constraints_step1 import *
 
 
 ###################################################################
@@ -9,8 +8,8 @@ def constraint_table_presence(data, solver, mu):
     for t in range(len(data.tables)):
         solver.Add(
             solver.Sum([
-                mu[j, t] == 1 for j in range(len(data.nodes))
-            ])
+                mu[j, t] for j in range(len(data.nodes))
+            ]) == 1
         )
 
 
@@ -23,19 +22,55 @@ def constraint_master_slave(data, solver, mu, sigma):
                 mu[j, t] + sigma[j, t] <= 1
             )
 
+    # DEBUG force replication
+    for t in range(len(data.tables)):
+        solver.Add(
+            solver.Sum([
+                sigma[j, t] for j in range(len(data.nodes))
+            ]) >= 1
+        )
+
 
 # If there is an assignment, we need a function instance on i, the dependency variable true and the
 # assignment can be at most 1
 
-def constraint_function_assignment(data, solver, y, c, r):
+
+def constraint_function_assignment(data, solver, y, cr, c, r):
     for i in range(len(data.nodes)):
         for t in range(len(data.tables)):
             for f in range(len(data.functions)):
                 solver.Add(
                     solver.Sum([
-                        y[f, t, i, j] == c[f, i] * r[f, t]
+                        y[f, t, i, j] for j in range(len(data.nodes))
                     ])
+                    == cr[f, t, i]
                 )
+    # Linearization
+    for i in range(len(data.nodes)):
+        for t in range(len(data.tables)):
+                for f in range(len(data.functions)):
+                    solver.Add(
+                        cr[f, t, i] <= c[f, i]
+                    )
+                    solver.Add(
+                        cr[f, t, i] <= r[f, t]
+                    )
+                    solver.Add(
+                        cr[f, t, i] >= c[f, i] + r[f, t] - 1
+                    )
+    # DEBUG
+    # Force self loops
+    for i in range(len(data.nodes)):
+        for t in range(len(data.tables)):
+            for f in range(len(data.functions)):
+                solver.Add(
+                        y[f, t, i, i] == 1
+                )
+    for i in range(len(data.nodes)):
+        for f in range(len(data.functions)):
+            solver.Add(
+                c[f, i] == 1
+            )
 
 
 # The node storage capacity shouldn’t be filled
@@ -44,9 +79,9 @@ def constraint_node_capacity(data, solver, mu, sigma):
     for i in range(len(data.nodes)):
         solver.Add(
             solver.Sum([
-                (sigma[i, t] + mu[i, t]) * data.s[t] <= data.node_storage_matrix[i]
+                (sigma[i, t] + mu[i, t]) * data.tables_sizes[t]
                 for t in range(len(data.tables))
-            ])
+            ]) <= data.node_storage_matrix[i]
         )
 
 
@@ -57,17 +92,17 @@ def constraint_rho_according_to_y(data, solver, rho, y):
         for t in range(len(data.tables)):
             solver.Add(
                 solver.Sum([
-                    y[f, t, i, j] >= 1 - M * (1 - rho[j, t])
-                    for f in range(len(data.nodes))
+                    y[f, t, i, j]
+                    for f in range(len(data.functions))
                     for i in range(len(data.nodes))
-                ])
+                ]) >= 1 - M * (1 - rho[j, t])
             )
             solver.Add(
                 solver.Sum([
-                    y[f, t, i, j] <= M * (rho[j, t])
-                    for f in range(len(data.nodes))
+                    y[f, t, i, j]
+                    for f in range(len(data.functions))
                     for i in range(len(data.nodes))
-                ])
+                ]) <= M * (rho[j, t])
             )
 
 
@@ -77,26 +112,37 @@ def constraint_r_according_to_beta_and_gamma(data, solver, r):
     for f in range(len(data.functions)):
         for t in range(len(data.tables)):
             solver.Add(
-                data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t] >= 1 - M * (1 - r[f, t])
+                float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) >= 1 - M * (1 - r[f, t])
             )
             solver.Add(
-                data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t] <= M * (r[f, t])
+                float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) <= M * (r[f, t])
             )
 
 
 # If there is a function reading on table t in node j and the table was not present, then the table
 # should be loaded from somewhere.
 
-# TODO: add v_old_matrix in data file
 def constraint_migration(data, solver, rho, q):
-    for j in range(len(data)):
+    for j in range(len(data.nodes)):
         for t in range(len(data.tables)):
             solver.Add(
+                rho[j, t] * float(1 - data.v_old_matrix[j, t]) ==
                 solver.Sum([
-                    rho[j, t] * (1 - data.v_old_matrix[j, t]) >= q[i, j, t]
+                    q[i, j, t]
                     for i in range(len(data.nodes))
                 ])
             )
+
+
+# Table should be moved from a node where it was previously present
+
+def constraint_migration_2(data, solver, q):
+    for i in range(len(data.nodes)):
+        for j in range(len(data.nodes)):
+            for t in range(len(data.tables)):
+                solver.Add(
+                    q[i, j, t] <= data.v_old_matrix[i, t]
+                )
 
 
 # The table should be present
@@ -124,6 +170,9 @@ def constraint_linearity_z(data, solver, z, x, y):
                         solver.Add(
                             z[f, t, i, j, k] <= y[f, t, i, j]
                         )
+                        solver.Add(
+                            z[f, t, i, j, k] >= 0
+                        )
 
 
 def constraint_linearity_w(data, solver, w, x, mu):
@@ -136,11 +185,12 @@ def constraint_linearity_w(data, solver, w, x, mu):
                             w[f, t, i, j, k] <= x[k, f, i]
                         )
                         solver.Add(
-                            w[f, t, i, j, k] >= x[k, f, i] - (1 - mu[f, t, i, j])
+                            w[f, t, i, j, k] >= x[k, f, i] - (1 - mu[j, t])
                         )
                         solver.Add(
-                            w[f, t, i, j, k] <= mu[f, t, i, j]
+                            w[f, t, i, j, k] <= mu[j, t]
                         )
+
 
 
 def constraint_linearity_psi(data, solver, psi, x, mu, sigma):
@@ -173,8 +223,8 @@ def constraint_linearity_gmax(data, solver, gmax, psi, d):
                 )
     solver.Add(
         solver.Sum([
-            d[i, j] == 1
+            d[i, j]
             for i in range(len(data.nodes))
             for j in range(len(data.nodes))
-        ])
+        ]) == 1
     )

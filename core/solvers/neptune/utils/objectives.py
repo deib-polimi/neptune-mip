@@ -1,5 +1,6 @@
 import numpy as np
 
+from ...data_solver.utils.objectives import *
 
 def minimize_network_delay(data, objective, x):
     for f in range(len(data.functions)):

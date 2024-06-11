@@ -1,5 +1,7 @@
-M = 10**6
-epsilon = 10**-6
+
+M = 10 ** 3
+epsilon = 10 ** -6
+
 
 # If a function `f` is deployed on node i then c[f,i] is True
 def constrain_c_according_to_x(data, solver, c, x):
@@ -12,7 +14,8 @@ def constrain_c_according_to_x(data, solver, c, x):
             solver.Add(
                 solver.Sum([
                     x[i, f, j] for i in range(len(data.nodes))
-                ]) + epsilon >= c[f, j] )
+                ]) + epsilon >= c[f, j])
+
 
 # The sum of the memory of functions deployed on a node is less than its capacity
 def constrain_memory_usage(data, solver, c):
@@ -101,3 +104,6 @@ def constrain_GPU_usage(data, solver, x):
 def constrain_budget(data, solver, n):
     for j in range(len(data.nodes)):
         solver.Add(n[j] * data.node_costs[j] <= data.node_budget)
+
+
+# TODO: constraint_max_delay

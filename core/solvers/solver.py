@@ -2,8 +2,10 @@ from ortools.linear_solver import pywraplp
 from ..utils.data import Data
 import datetime
 
+
 class Solver:
     def __init__(self, verbose: bool = True, **kwargs):
+
         self.solver = pywraplp.Solver.CreateSolver('SCIP')
         self.verbose = verbose
         if verbose:
@@ -11,6 +13,8 @@ class Solver:
         self.objective = self.solver.Objective()
         self.data = None
         self.args = kwargs
+
+        self.graph_gen = None
 
     def load_data(self, data: Data):
         self.data = data
@@ -21,10 +25,10 @@ class Solver:
 
     def init_vars(self):
         raise NotImplementedError("Solvers must implement init_vars()")
-    
+
     def init_constraints(self):
         raise NotImplementedError("Solvers must implement init_constraints()")
-    
+
     def init_objective(self):
         raise NotImplementedError("Solvers must implement init_objective()")
 
@@ -33,10 +37,16 @@ class Solver:
             print(f"{datetime.datetime.now()}: {msg}")
 
     def solve(self):
+        # self.solver.SetMipGap(0.0001)
+        # Time
+        self.solver.SetTimeLimit(120 * 1000)
+        # Force optimal
+        self.solver.SetSolverSpecificParametersAsString('limits/solutions = 1')
         self.init_objective()
         status = self.solver.Solve()
         value = self.solver.Objective().Value()
         self.log(f"Problem solved with status {status} and value {value}")
+
         return status == pywraplp.Solver.OPTIMAL
 
     def results(self):
@@ -44,3 +54,9 @@ class Solver:
 
     def score(self) -> float:
         return self.objective.Value()
+
+    def clear(self):
+        self.solver.Clear()
+
+    def verify(self):
+        self.solver.VerifySolution(tolerance=-1, log_errors=True)

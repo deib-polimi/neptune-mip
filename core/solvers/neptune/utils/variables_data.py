@@ -1,5 +1,5 @@
+from .variables import *
 import numpy as np
-from ...neptune.utils.variables import *
 
 def init_mu(data, solver, mu):
     for t in range(len(data.tables)):
@@ -74,3 +74,10 @@ def init_d(data, solver, d):
     for i in range(len(data.nodes)):
         for j in range(len(data.nodes)):
             d[i, j] = solver.BoolVar(f"d[{i}][{j}]")
+
+# Linearization of c * r
+def init_cr(data, solver, cr):
+    for f in range(len(data.functions)):
+        for t in range(len(data.tables)):
+            for i in range(len(data.nodes)):
+                cr[f, t, i] = solver.BoolVar(f"cr[{f}][{t}][{i}]")
