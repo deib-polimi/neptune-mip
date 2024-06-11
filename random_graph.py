@@ -1,10 +1,11 @@
 import networkx as nx
-import random
+from data_generation import random
 import matplotlib.pyplot as plt
 
 
-def draw_graph(G):
-    pos = nx.spring_layout(G)
+
+def draw_graph(G, seed=None):
+    pos = nx.spring_layout(G, seed=seed)
     edge_labels = {(u, v): d['weight'] for u, v, d in G.edges(data=True)}
 
     plt.figure(figsize=(8, 6))
@@ -16,9 +17,9 @@ def draw_graph(G):
     plt.show()
 
 
-def random_delays(num_nodes):
+def random_delays(num_nodes, seed=None):
     # Generate a random tree
-    G = nx.random_tree(num_nodes)
+    G = nx.random_tree(num_nodes, seed=seed)
 
     # Convert the tree to an undirected graph
     G = G.to_undirected()
@@ -46,7 +47,7 @@ def random_delays(num_nodes):
     for i in range(num_nodes):
         matrix[i][i] = 0
 
-    #draw_graph(G)
+    draw_graph(G, seed=seed)
 
     return matrix
 

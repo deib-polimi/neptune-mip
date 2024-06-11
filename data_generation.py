@@ -3,8 +3,9 @@ import random
 import random_graph as rg
 
 class DataGeneration:
-    def __init__(self, autogen=False):
+    def __init__(self, autogen=False, seed=None):
         self.autogen = autogen
+        random.seed(seed)
         self.max_nodes = 3
         self.min_nodes = 3
         self.max_functions = 3

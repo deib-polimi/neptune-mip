@@ -3,14 +3,16 @@ import requests
 import pprint
 import networkx as nx
 
-import random
 from data_generation import DataGeneration
 import json
 import graph_visualization as gv
 
 # Generate the random data
 
-dataG = DataGeneration(autogen=True)
+
+SEED = 25
+
+dataG = DataGeneration(autogen=True, seed=SEED)
 
 node_names = dataG.generate_node_names()
 num_nodes = len(node_names)
@@ -113,7 +115,7 @@ gv.display_function_table_matrix(input_data)
 print("\nTable location")
 gv.display_table_node_matrix(input_data)
 
-response = requests.request(method='get', url="http://localhost:5000/", json=input_data)
+response = requests.request(method='get', url="http://localhost:5001/", json=input_data)
 
 print("\nSolution found!")
 print("")
@@ -124,10 +126,10 @@ response_data = response.json()
 
 graph = gv.create_graph_from_data(input_data)
 
-gv.draw_topology_graph(input_data, graph)
+#gv.draw_topology_graph(input_data, graph)
 
-gv.draw_migrations_graph(response_data)
-gv.draw_function_dep_graph(response_data)
+#gv.draw_migrations_graph(response_data)
+#gv.draw_function_dep_graph(response_data)
 
 
 

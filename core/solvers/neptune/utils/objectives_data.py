@@ -29,7 +29,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
                             z[f, t, i, j, k],
                             float(delta[i, j] * beta[f, t] * size[t] * lambda_w[f, k] * (1 / (60 * 2)))
                         )
-    '''
+    
     # C^w
     for i in range(C):
         for j in range(C):
@@ -42,7 +42,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
                         )
     
     # C^s
-    
+    '''
     for k in range(C):
         for t in range(T):
             for f in range(F):

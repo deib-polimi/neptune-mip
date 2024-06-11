@@ -23,12 +23,12 @@ def constraint_master_slave(data, solver, mu, sigma):
             )
 
     # DEBUG force replication
-    for t in range(len(data.tables)):
-        solver.Add(
-            solver.Sum([
-                sigma[j, t] for j in range(len(data.nodes))
-            ]) >= 1
-        )
+    # for t in range(len(data.tables)):
+    #     solver.Add(
+    #         solver.Sum([
+    #             sigma[j, t] for j in range(len(data.nodes))
+    #         ]) >= 1
+    #     )
 
 
 # If there is an assignment, we need a function instance on i, the dependency variable true and the
@@ -60,17 +60,12 @@ def constraint_function_assignment(data, solver, y, cr, c, r):
                     )
     # DEBUG
     # Force self loops
-    for i in range(len(data.nodes)):
-        for t in range(len(data.tables)):
-            for f in range(len(data.functions)):
-                solver.Add(
-                        y[f, t, i, i] == 1
-                )
-    for i in range(len(data.nodes)):
-        for f in range(len(data.functions)):
-            solver.Add(
-                c[f, i] == 1
-            )
+    # for i in range(len(data.nodes)):
+    #     for t in range(len(data.tables)):
+    #         for f in range(len(data.functions)):
+    #             solver.Add(
+    #                     y[f, t, i, i] == 1
+    #             )
 
 
 # The node storage capacity shouldn’t be filled

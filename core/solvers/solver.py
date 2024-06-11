@@ -41,14 +41,13 @@ class Solver:
         # Time
         self.solver.SetTimeLimit(120 * 1000)
         # Force optimal
-        self.solver.SetSolverSpecificParametersAsString('limits/solutions = 1')
+        #self.solver.SetSolverSpecificParametersAsString('limits/solutions = 1')
         self.init_objective()
         status = self.solver.Solve()
         value = self.solver.Objective().Value()
         self.log(f"Problem solved with status {status} and value {value}")
-
-        return status == pywraplp.Solver.OPTIMAL
-
+        return status
+    
     def results(self):
         raise NotImplementedError("Solvers must implement results()")
 
