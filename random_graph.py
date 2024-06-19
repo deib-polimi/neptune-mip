@@ -28,7 +28,7 @@ def random_delays(num_nodes, seed=None):
     added_edges = 0
     num_edges = len(G.edges())
     max_edges = ((num_nodes * num_nodes) / 2) - (num_nodes / 2)
-    additional_edges = random.randint(0, (max_edges - num_edges)//2)
+    additional_edges = random.randint(0, int(max_edges - num_edges)//2)
     while added_edges < additional_edges:
         u, v = random.sample(range(num_nodes), 2)
         if not G.has_edge(u, v):
@@ -47,6 +47,7 @@ def random_delays(num_nodes, seed=None):
     for i in range(num_nodes):
         matrix[i][i] = 0
 
+    # DEBUG
     #draw_graph(G, seed=seed)
 
     return matrix

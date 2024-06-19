@@ -115,7 +115,7 @@ gv.display_function_table_matrix(input_data)
 print("\nTable location")
 gv.display_table_node_matrix(input_data)
 
-response = requests.request(method='get', url="http://localhost:5000/", json=input_data)
+response = requests.request(method='get', url="http://10.75.4.148:5000/", json=input_data)
 
 print("\nSolution found!")
 print("")
@@ -128,8 +128,8 @@ graph = gv.create_graph_from_data(input_data)
 
 #gv.draw_topology_graph(input_data, graph)
 
-#gv.draw_migrations_graph(response_data)
-#gv.draw_function_dep_graph(response_data)
+gv.draw_migrations_graph(response_data)
+gv.draw_function_dep_graph(response_data)
 
 
 

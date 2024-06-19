@@ -122,6 +122,7 @@ def data_to_solver_input(input, workload_coeff, with_db=True):
     data.node_memory_matrix = np.array(aux_data.node_memories)
     data.function_memory_matrix = np.array(aux_data.function_memories)
     data.node_delay_matrix = np.array(aux_data.node_delay_matrix)
+    data.max_delay = np.max(data.node_delay_matrix)
     data.workload_matrix = np.array(aux_data.workload_on_source_matrix) * workload_coeff
     data.max_delay_matrix = np.array(aux_data.max_delay_matrix)
     data.response_time_matrix = np.array(aux_data.response_time_matrix)

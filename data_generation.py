@@ -8,10 +8,10 @@ class DataGeneration:
         random.seed(seed)
         self.max_nodes = 3
         self.min_nodes = 3
-        self.max_functions = 3
-        self.min_functions = 3
-        self.max_tables = 2
-        self.min_tables = 2
+        self.max_functions = 2
+        self.min_functions = 2
+        self.max_tables = 1
+        self.min_tables = 1
 
     def generate_node_names(self):
         if self.autogen:
@@ -45,7 +45,7 @@ class DataGeneration:
     def generate_node_cores(self, num_nodes):
         if self.autogen:
             # Generate random core values between 10 and 200 for each node
-            return [random.randint(500, 1000) for _ in range(num_nodes)]
+            return [random.randint(10000, 100000) for _ in range(num_nodes)]
         # Default core values for 3 nodes
         return [100, 50, 50]
 
