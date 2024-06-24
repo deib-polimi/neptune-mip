@@ -11,7 +11,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
     beta = data.read_per_req_matrix
     gamma = data.write_per_req_matrix
     size = data.tables_sizes
-    
+
     # C^f
     for i in range(C):
         for j in range(C):
