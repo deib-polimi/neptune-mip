@@ -1,0 +1,28 @@
+{
+    "SEED": 25,
+    "solver": {
+        "with_db": false,
+        "type": "NeptuneData",
+        "args": {
+            "alpha": 1,
+            "verbose": true,
+            "soften_step1_sol": 1.3
+        }
+    },
+    "workload_coeff": 1,
+    "community": "community-test",
+    "namespace": "namespace-test",
+    "max_attempts": 20,
+    "request": {
+        "method": "get",
+        "url": "http://10.75.4.148:5000/"
+    },
+    "data_generation": {
+        "max_nodes": 5,
+        "min_nodes": 5,
+        "max_functions": 5,
+        "min_functions": 5,
+        "max_tables": 5,
+        "min_tables": 5
+    }
+}
