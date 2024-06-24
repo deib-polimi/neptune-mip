@@ -18,11 +18,11 @@
         "url": "http://10.75.4.148:5000/"
     },
     "data_generation": {
-        "max_nodes": 5,
-        "min_nodes": 5,
-        "max_functions": 5,
-        "min_functions": 5,
-        "max_tables": 5,
-        "min_tables": 5
+        "max_nodes": 3,
+        "min_nodes": 3,
+        "max_functions": 3,
+        "min_functions": 3,
+        "max_tables": 1,
+        "min_tables": 1
     }
 }
