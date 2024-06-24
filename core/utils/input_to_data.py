@@ -82,8 +82,8 @@ def check_input(schedule_input):
 
     # Data related part
 
-    tables = schedule_input.get('tables_names', [])
-    tables_sizes = schedule_input.get('tables_sizes', [])
+    tables = schedule_input.get('table_names', [])
+    tables_sizes = schedule_input.get('table_sizes', [])
 
     print(f"Tables are: {tables}")
     print(f"Tables sizes are: {tables_sizes}")
@@ -122,6 +122,7 @@ def data_to_solver_input(input, workload_coeff, with_db=True):
     data.node_memory_matrix = np.array(aux_data.node_memories)
     data.function_memory_matrix = np.array(aux_data.function_memories)
     data.node_delay_matrix = np.array(aux_data.node_delay_matrix)
+    data.max_delay = np.max(data.node_delay_matrix)
     data.workload_matrix = np.array(aux_data.workload_on_source_matrix) * workload_coeff
     data.max_delay_matrix = np.array(aux_data.max_delay_matrix)
     data.response_time_matrix = np.array(aux_data.response_time_matrix)
@@ -136,6 +137,7 @@ def data_to_solver_input(input, workload_coeff, with_db=True):
     # Data related part
 
     data.node_storage_matrix = np.array(aux_data.node_storage_matrix)
+    assert (len(data.node_storage_matrix) != 0)
     data.v_old_matrix = np.array(aux_data.v_old_matrix)
     data.tables_sizes = np.array(aux_data.tables_sizes)
     data.read_per_req_matrix = np.array(aux_data.read_per_req_matrix)
@@ -179,13 +181,11 @@ def setup_community_data(input, data):
     data.gpu_function_memories = input.get('gpu_function_memories')
     data.max_delay_matrix = [1000 for _ in range(len(data.function_memories))]
 
-    # New parameter for node storage
     data.node_storage_matrix = np.array(input.get('node_storage', []))
 
-    # New parameter for tables
-    data.tables = input.get('tables_names', [])
-    data.tables_names = input.get('tables_names', [])
-    data.tables_sizes = input.get('tables_sizes', [])
+    data.tables = input.get('table_names', [])
+    data.tables_names = input.get('table_names', [])
+    data.tables_sizes = input.get('table_sizes', [])
 
 
 def setup_runtime_data(data, input):

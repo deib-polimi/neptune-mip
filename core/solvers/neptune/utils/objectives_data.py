@@ -11,6 +11,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
     beta = data.read_per_req_matrix
     gamma = data.write_per_req_matrix
     size = data.tables_sizes
+    
     # C^f
     for i in range(C):
         for j in range(C):
@@ -18,7 +19,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
                 objective.SetCoefficient(
                     x[i, f, j], float(delta[i, j] * lambda_w[f, i])
                 )
-
+    
     # C^r
     for i in range(C):
         for j in range(C):
@@ -29,7 +30,7 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
                             z[f, t, i, j, k],
                             float(delta[i, j] * beta[f, t] * size[t] * lambda_w[f, k] * (1 / (60 * 2)))
                         )
-    
+    '''
     # C^w
     for i in range(C):
         for j in range(C):
@@ -40,16 +41,15 @@ def minimize_network_data_delay(data, objective, x, z, w, gmax, q):
                             w[f, t, i, j, k],
                             float(delta[i, j] * gamma[f, t] * size[t] * lambda_w[f, k] * (1 / (60 * 2)))
                         )
-    
-    # C^s
     '''
+    # C^s
     for k in range(C):
         for t in range(T):
             for f in range(F):
                 objective.SetCoefficient(
-                    gmax[t], float(0.1 * lambda_w[f, k] * gamma[f, t] * size[t] * (1 / (60 * 2)))
+                    gmax[t], float(lambda_w[f, k] * gamma[f, t] * size[t] * (1 / (60 * 2)))
                 )
-    
+    '''
     # C^m
     for i in range(C):
         for j in range(C):

@@ -82,7 +82,7 @@ def display_function_node_matrix(data):
 
 def display_function_table_matrix(data):
     function_names = data["function_names"]
-    table_names = data["tables_names"]
+    table_names = data["table_names"]
     read_per_req_matrix = data["read_per_req_matrix"]
     write_per_req_matrix = data["write_per_req_matrix"]
 
@@ -101,7 +101,7 @@ def display_function_table_matrix(data):
 
 
 def display_table_node_matrix(data):
-    table_names = data["tables_names"]
+    table_names = data["table_names"]
     node_names = data["node_names"]
     v_old_matrix = data["v_old_matrix"]
 
@@ -126,8 +126,8 @@ def display_table_node_matrix(data):
 
 def display_tables_table(data):
     table_data = {
-        "Table": data["tables_names"],
-        "Size (B)": data["tables_sizes"],
+        "Table": data["table_names"],
+        "Size (B)": data["table_sizes"],
     }
 
     df = pd.DataFrame(table_data)

@@ -73,7 +73,8 @@ def init_r(data, solver, r):
 def init_d(data, solver, d):
     for i in range(len(data.nodes)):
         for j in range(len(data.nodes)):
-            d[i, j] = solver.BoolVar(f"d[{i}][{j}]")
+            for t in range(len(data.tables)):
+                d[i, j, t] = solver.BoolVar(f"d[{i}][{j}][{t}]")
 
 # Linearization of c * r
 def init_cr(data, solver, cr):
@@ -81,3 +82,7 @@ def init_cr(data, solver, cr):
         for t in range(len(data.tables)):
             for i in range(len(data.nodes)):
                 cr[f, t, i] = solver.BoolVar(f"cr[{f}][{t}][{i}]")
+
+
+def init_eta(solver, eta):
+    eta = solver.NumVar(0, solver.infinity(), f"eta")

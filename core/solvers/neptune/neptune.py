@@ -98,6 +98,7 @@ class NeptuneData(Solver):
         self.r = {}
         self.d = {}
         self.cr = {}
+        self.eta = {}
 
     def init_vars(self):
         data = self.data
@@ -117,6 +118,7 @@ class NeptuneData(Solver):
         init_r(data, solver, self.r)
         init_d(data, solver, self.d)
         init_cr(data, solver, self.cr)
+        init_psi(data, solver, self.eta)
 
     def init_constraints(self):
         constrain_c_according_to_x(self.data, self.solver, self.c, self.x)
@@ -124,18 +126,18 @@ class NeptuneData(Solver):
         constrain_handle_all_requests(self.data, self.solver, self.x, eq=True)
         constrain_CPU_usage(self.data, self.solver, self.x)
         constraint_table_presence(self.data, self.solver, self.mu)
-        constraint_master_slave(self.data, self.solver, self.mu, self.sigma)
+        constraint_master_slave(self.data, self.solver, self.mu, self.sigma)  # TODO : da problemi
         constraint_function_assignment(self.data, self.solver, self.y, self.cr, self.c, self.r)
         constraint_node_capacity(self.data, self.solver, self.mu, self.sigma)
         constraint_rho_according_to_y(self.data, self.solver, self.rho, self.y)
         constraint_r_according_to_beta_and_gamma(self.data, self.solver, self.r)
         constraint_migration(self.data, self.solver, self.rho, self.q)
-        constraint_migration_2(self.data, self.solver, self.q)
+        constraint_migration_2(self.data, self.solver, self.q, self.sigma, self.mu)
         constraint_presence(self.data, self.solver, self.rho, self.mu, self.sigma)
         constraint_linearity_z(self.data, self.solver, self.z, self.x, self.y)
-        # constraint_linearity_w(self.data, self.solver, self.w, self.x, self.mu)
-        # constraint_linearity_psi(self.data, self.solver, self.psi, self.x, self.mu, self.sigma)
-        # constraint_linearity_gmax(self.data, self.solver, self.gmax, self.psi, self.d)
+        constraint_linearity_w(self.data, self.solver, self.w, self.x, self.mu)
+        constraint_linearity_psi(self.data, self.solver, self.psi, self.mu, self.sigma)
+        constraint_linearity_gmax(self.data, self.solver, self.gmax, self.psi, self.d)
 
     def init_objective(self):
         minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q)
@@ -227,9 +229,10 @@ class NeptuneData(Solver):
             print(self.gmax[t].solution_value())
 
         # Print decision variables d
-        print("\n##### d matrix #####\n")
-        for i in range(len(self.data.nodes)):
-            row = []
-            for j in range(len(self.data.nodes)):
-                row.append(self.d[i, j].solution_value())
-            print("\t".join(map(str, row)))
+        for t in range(len(self.data.tables)):
+            print(f"\n##### d matrix for t={t}#####\n")
+            for i in range(len(self.data.nodes)):
+                row = []
+                for j in range(len(self.data.nodes)):
+                    row.append(self.d[i, j, t].solution_value())
+                print("\t".join(map(str, row)))

@@ -1,143 +1,192 @@
 import numpy as np
 import random
 import random_graph as rg
+import json
+from data_check import *
 
-class DataGeneration:
-    def __init__(self, autogen=False, seed=None):
-        self.autogen = autogen
+class DataGenerator:
+    def __init__(self, auto_generate=False, seed=None):
+        self.auto_generate = auto_generate
         random.seed(seed)
-        self.max_nodes = 3
-        self.min_nodes = 3
-        self.max_functions = 3
-        self.min_functions = 3
-        self.max_tables = 2
-        self.min_tables = 2
+        # Load configuration from config.json
+        with open('config.json', 'r') as config_file:
+            config = json.load(config_file)
+        self.max_nodes = config["data_generation"]["max_nodes"]
+        self.min_nodes = config["data_generation"]["min_nodes"]
+        self.max_functions = config["data_generation"]["max_functions"]
+        self.min_functions = config["data_generation"]["min_functions"]
+        self.max_tables = config["data_generation"]["max_tables"]
+        self.min_tables = config["data_generation"]["min_tables"]
 
     def generate_node_names(self):
-        if self.autogen:
-            num_nodes = random.randint(self.min_nodes, self.max_nodes)
-            return [f"node_{chr(97 + i)}" for i in range(num_nodes)]
-        return ["node_a", "node_b", "node_c"]
+        num_nodes = random.randint(self.min_nodes, self.max_nodes)
+        return [f"node_{chr(97 + i)}" for i in range(num_nodes)]
 
     def generate_delay_matrix(self, num_nodes):
-        if self.autogen:
-            # Generate a symmetric delay matrix with random delays between 1 and 1000
-            delay_matrix = rg.random_delays(num_nodes)
-        else:
-            # Default delay matrix for 3 nodes
-            delay_matrix = [[0, 250, 250], [250, 0, 4], [250, 4, 0]]
+        # Generate a symmetric delay matrix with random delays between 1 and 10
+        delay_matrix = rg.random_delays(num_nodes)
         return delay_matrix
 
     def generate_node_memories(self, num_nodes):
-        if self.autogen:
-            # Generate random memory values between 50 and 500 for each node
-            return [random.randint(50, 500) for _ in range(num_nodes)]
-        # Default memory values for 3 nodes
-        return [100, 100, 200]
+        # Generate random memory values for each node
+        return [random.randint(50, 500) for _ in range(num_nodes)]
 
     def generate_node_storage(self, num_nodes):
-        if self.autogen:
-            # Generate random storage values between 512 and 4096 for each node
-            return [random.randint(4096, 8192) for _ in range(num_nodes)]
-        # Default storage values for 3 nodes
-        return [1024, 1024, 2048]
+        # Generate random storage values for each node
+        return [random.randint(128,968) for _ in range(num_nodes)]
 
     def generate_node_cores(self, num_nodes):
-        if self.autogen:
-            # Generate random core values between 10 and 200 for each node
-            return [random.randint(500, 1000) for _ in range(num_nodes)]
-        # Default core values for 3 nodes
-        return [100, 50, 50]
-
+        # Generate random core values between for each node
+        return [random.randint(10000, 100000) for _ in range(num_nodes)]
+    
     def generate_function_names(self):
-        if self.autogen:
-            num_functions = random.randint(self.min_functions, self.max_functions)
-            return [f"ns/fn_{i}" for i in range(1, num_functions + 1)]
-        return ["ns/fn_1", "ns/fn_2"]
+        num_functions = random.randint(self.min_functions, self.max_functions)
+        return [f"ns/fn_{i}" for i in range(1, num_functions + 1)]
 
     def generate_function_memories(self, num_functions):
-        if self.autogen:
-            return [random.randint(1, 10) for _ in range(num_functions)]
-        return [5, 5]
+        return [random.randint(1, 10) for _ in range(num_functions)]
 
     def generate_function_max_delays(self, num_functions):
-        if self.autogen:
-            return [random.randint(1000, 2000) for _ in range(num_functions)]
-        return [100, 100]
+        return [random.randint(1000, 2000) for _ in range(num_functions)]
 
-    # genera u_f_j
+    # generate u_f_j
     def generate_core_per_req_matrix(self, num_functions, num_nodes):
-        if self.autogen:
-            return [[random.randint(1, 5) for _ in range(num_nodes)] for _ in range(num_functions)]
+        return [[random.randint(1, 5) for _ in range(num_nodes)] for _ in range(num_functions)]
 
     def generate_actual_cpu_allocations(self, function_names, node_names):
-        if self.autogen:
-            return {fn: {node: random.choice([True]) for node in node_names} for fn in function_names}
-        return {
-            "ns/fn_1": {"node_a": True, "node_b": True, "node_c": True},
-            "ns/fn_2": {"node_a": True, "node_b": True, "node_c": True}
-        }
-
+        return {fn: {node: random.choice([True]) for node in node_names} for fn in function_names}
+        
     def generate_table_names(self):
-        if self.autogen:
-            num_tables = random.randint(self.min_tables, self.max_tables)
-            return [f"table_{chr(97 + i)}" for i in range(num_tables)]
-        return ["table_a", "table_b"]
+        num_tables = random.randint(self.min_tables, self.max_tables)
+        return [f"table_{chr(97 + i)}" for i in range(num_tables)]
 
     def generate_table_sizes(self, num_tables):
-        if self.autogen:
-            return [random.randint(100, 200) for _ in range(num_tables)]
-        return [500, 200]
+        return [random.randint(100, 200) for _ in range(num_tables)]
 
     def generate_v_old_matrix(self, num_nodes, num_tables):
-        # print(f"Generating {num_nodes} x {num_tables} matrix")
-        if self.autogen:
-            matrix = [[-1 for _ in range(num_tables)] for _ in range(num_nodes)]
-            # print(matrix)
-            for i in range(num_tables):  # Iterating over columns
-                # Select the number of copies
-                num_copies = random.randint(1, num_nodes // 2 + 1)
-                # print(f"Selected copies for table {i}: {num_copies}")
-                while num_copies > 0:
-                    for j in range(num_nodes):  # Iterating over columns
+        matrix = [[-1 for _ in range(num_tables)] for _ in range(num_nodes)]
+        for i in range(num_tables):  
+            # Select the number of copies
+            num_copies = random.randint(1, num_nodes // 2 + 1)
 
-                        if matrix[j][i] == -1 and random.choice([True, False]):
-                            matrix[j][i] = 1
-                            num_copies -= 1
-                            if num_copies == 0:
-                                break
-            # Set all remaining None values to 1
-            for i in range(num_nodes):
-                for j in range(num_tables):
-                    if matrix[i][j] == -1:
-                        matrix[i][j] = 0
-            print("Old table locations: ")
-            for row in matrix:
-                print(row)
-            return matrix
-        return [[0, 1], [0, 0], [1, 0]]
+            # print(f"Selected copies for table {i}: {num_copies}")
+            while num_copies > 0:
+                for j in range(num_nodes):
+
+                    if matrix[j][i] == -1 and random.choice([True, False]):
+                        matrix[j][i] = 1
+                        num_copies -= 1
+                        if num_copies == 0:
+                            break
+        # Set all remaining None values to 0
+        for i in range(num_nodes):
+            for j in range(num_tables):
+                if matrix[i][j] == -1:
+                    matrix[i][j] = 0
+        print("Old table locations: ")
+        for row in matrix:
+            print(row)
+        return matrix
 
     def generate_read_per_req_matrix(self, num_functions, num_tables):
-        if self.autogen:
-            return [[random.randint(0, 10) for _ in range(num_tables)] for _ in range(num_functions)]
-        return [[22, 0], [0, 11]]
+        return [[random.randint(0, 10) for _ in range(num_tables)] for _ in range(num_functions)]
 
     def generate_write_per_req_matrix(self, num_functions, num_tables):
-        if self.autogen:
-            return [[random.randint(0, 10) for _ in range(num_tables)] for _ in range(num_functions)]
-        return [[33, 0], [0, 20]]
+        return [[random.randint(0, 10) for _ in range(num_tables)] for _ in range(num_functions)]
 
     def generate_workload_on_source_matrix(self, num_functions, num_nodes):
-        if self.autogen:
-            return [[random.randint(5, 30) for _ in range(num_nodes)] for _ in range(num_functions)]
-        return [[100, 0, 0], [1, 0, 0]]
+        return [[random.randint(5, 30) for _ in range(num_nodes)] for _ in range(num_functions)]
 
     def generate_cores_matrix(self, num_functions, num_nodes):
-        if self.autogen:
-            return [[random.randint(1, 10) for _ in range(num_nodes)] for _ in range(num_functions)]
-        return [[1, 1, 100] for _ in range(num_functions)]  # Default cores matrix
+        return [[random.randint(1, 10) for _ in range(num_nodes)] for _ in range(num_functions)]
 
     def generate_workload_on_destination_matrix(self, num_functions, num_nodes):
-        if self.autogen:
-            return [[random.randint(0, 10) for _ in range(num_nodes)] for _ in range(num_functions)]
-        return [[1, 1, 100] for _ in range(num_functions)]  # Default workload on destination matrix
+        return [[random.randint(0, 10) for _ in range(num_nodes)] for _ in range(num_functions)]
+    
+
+    def generate_input_data(self, max_attempts=1):
+        if self.auto_generate:
+            # Node infrastructure
+            node_names = self.generate_node_names()
+            num_nodes = len(node_names)
+
+            node_delay_matrix = self.generate_delay_matrix(num_nodes)
+            node_memories = self.generate_node_memories(num_nodes)
+            node_storage = self.generate_node_storage(num_nodes)
+            node_cores = self.generate_node_cores(num_nodes)
+
+            # Functions data
+            function_names = self.generate_function_names()
+            num_functions = len(function_names)
+
+            function_memories = self.generate_function_memories(num_functions)
+            function_max_delays = self.generate_function_max_delays(num_functions)
+            actual_cpu_allocations = self.generate_actual_cpu_allocations(function_names, node_names)
+
+            # Tables data
+            table_names = self.generate_table_names()
+            num_tables = len(table_names)
+
+            table_sizes = self.generate_table_sizes(num_tables)
+            v_old_matrix = self.generate_v_old_matrix(num_nodes, num_tables)
+
+            # Monitored data
+            write_per_req_matrix = self.generate_write_per_req_matrix(num_functions, num_tables)
+            read_per_req_matrix = self.generate_read_per_req_matrix(num_functions, num_tables)
+            workload_on_source_matrix = self.generate_workload_on_source_matrix(num_functions, num_nodes)
+
+            # Generate and check if the total workload can be served by the community
+            attempts = 0
+            total_cores = sum(node_cores)
+            print("Total cores: ", total_cores)
+
+            core_per_req_matrix = self.generate_core_per_req_matrix(num_functions, num_nodes)
+            while check_workload(core_per_req_matrix, total_cores, workload_on_source_matrix):
+                core_per_req_matrix = self.generate_core_per_req_matrix(num_functions, num_nodes)
+                attempts += 1
+                if attempts >= max_attempts:
+                    raise Exception("Error: Maximum attempts exceeded. The workload cannot be served by the community.")
+
+            cores_matrix = self.generate_cores_matrix(num_functions, num_nodes)
+            workload_on_destination_matrix = self.generate_workload_on_destination_matrix(num_functions, num_nodes)
+
+            input_data = {
+                "with_db": False,
+                "solver": {
+                    "type": "NeptuneData",
+                    "args": {"alpha": 1, "verbose": True, "soften_step1_sol": 1.3}
+                },
+                "workload_coeff": 1,
+                "community": "community-test",
+                "namespace": "namespace-test",
+                "node_names": node_names,
+                "node_delay_matrix": node_delay_matrix,
+                "workload_on_source_matrix": workload_on_source_matrix,  # lambda_f_i
+                "node_memories": node_memories,
+                "node_storage": node_storage,
+                "node_cores": node_cores,
+                "gpu_node_names": [],
+                "gpu_node_memories": [],
+                "function_names": function_names,
+                "function_memories": function_memories,
+                "function_max_delays": function_max_delays,
+                "cores_per_req_matrix": core_per_req_matrix,
+                "gpu_function_names": [],
+                "gpu_function_memories": [],
+                "actual_cpu_allocations": actual_cpu_allocations,
+                "actual_gpu_allocations": {},
+                "table_names": table_names,
+                "table_sizes": table_sizes,
+                "v_old_matrix": v_old_matrix,
+                "write_per_req_matrix": write_per_req_matrix,
+                "read_per_req_matrix": read_per_req_matrix,
+                "cores_matrix": cores_matrix,  # TODO: cos'è?
+                "workload_on_destination_matrix": workload_on_destination_matrix
+            }
+
+            return input_data
+        else:
+            with open('default_data.json', 'r') as default_file:
+                self.default_data = json.load(default_file)
+            return self.default_data
+        

@@ -48,16 +48,16 @@ def constraint_function_assignment(data, solver, y, cr, c, r):
     # Linearization
     for i in range(len(data.nodes)):
         for t in range(len(data.tables)):
-                for f in range(len(data.functions)):
-                    solver.Add(
-                        cr[f, t, i] <= c[f, i]
-                    )
-                    solver.Add(
-                        cr[f, t, i] <= r[f, t]
-                    )
-                    solver.Add(
-                        cr[f, t, i] >= c[f, i] + r[f, t] - 1
-                    )
+            for f in range(len(data.functions)):
+                solver.Add(
+                    cr[f, t, i] <= c[f, i]
+                )
+                solver.Add(
+                    cr[f, t, i] <= r[f, t]
+                )
+                solver.Add(
+                    cr[f, t, i] >= c[f, i] + r[f, t] - 1
+                )
     # DEBUG
     # Force self loops
     # for i in range(len(data.nodes)):
@@ -131,7 +131,7 @@ def constraint_migration(data, solver, rho, q):
 
 # Table should be moved from a node where it was previously present
 
-def constraint_migration_2(data, solver, q):
+def constraint_migration_2(data, solver, q, sigma, mu):
     for i in range(len(data.nodes)):
         for j in range(len(data.nodes)):
             for t in range(len(data.tables)):
@@ -139,6 +139,14 @@ def constraint_migration_2(data, solver, q):
                     q[i, j, t] <= data.v_old_matrix[i, t]
                 )
 
+    #for j in range(len(data.nodes)):
+    #    for t in range(len(data.tables)):
+    #        solver.Add(
+    #            solver.Sum([
+    #                q[i, j, t]
+    #                for i in range(len(data.nodes))
+    #            ]) == sigma[j, t] + mu[j, t]
+    #        )
 
 # The table should be present
 
@@ -187,8 +195,7 @@ def constraint_linearity_w(data, solver, w, x, mu):
                         )
 
 
-
-def constraint_linearity_psi(data, solver, psi, x, mu, sigma):
+def constraint_linearity_psi(data, solver, psi, mu, sigma):
     for i in range(len(data.nodes)):
         for j in range(len(data.nodes)):
             for t in range(len(data.tables)):
@@ -204,22 +211,25 @@ def constraint_linearity_psi(data, solver, psi, x, mu, sigma):
 
 
 def constraint_linearity_gmax(data, solver, gmax, psi, d):
-    for i in range(len(data.nodes)):
-        for j in range(len(data.nodes)):
-            for t in range(len(data.tables)):
+    for t in range(len(data.tables)):
+        for i in range(len(data.nodes)):
+            for j in range(len(data.nodes)):
+                ###
                 solver.Add(
                     psi[i, j, t] * data.node_delay_matrix[i, j] <= data.node_delay_matrix[i, j]
+                 )
+                solver.Add(
+                    gmax[t] >= psi[i, j, t] * data.node_delay_matrix[i, j]
                 )
                 solver.Add(
-                    gmax[t] >= psi[i, j, t]
+                    gmax[t] <= psi[i, j, t] * data.node_delay_matrix[i, j] + data.max_delay * (1 - d[i, j, t])
                 )
-                solver.Add(
-                    gmax[t] <= psi[i, j, t] + data.max_delay * (1 - d[i, j])
-                )
-    solver.Add(
-        solver.Sum([
-            d[i, j]
-            for i in range(len(data.nodes))
-            for j in range(len(data.nodes))
-        ]) == 1
-    )
+
+    for t in range(len(data.tables)):
+        solver.Add(
+          solver.Sum([
+              d[i, j, t]
+              for i in range(len(data.nodes))
+              for j in range(len(data.nodes))
+              ]) == 1
+        )

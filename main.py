@@ -36,7 +36,7 @@ solver_classes = {
 def serve():
     print("Request received")
     input = request.json
-    print(input)
+    # print(input)
     check_input(input)
 
     solver_info = input.get("solver", {'type': 'NeptuneMinDelayAndUtilization'})
@@ -63,7 +63,7 @@ def serve():
     solver.load_data(data_to_solver_input(input, with_db=with_db, workload_coeff=input.get("workload_coeff", 1)))
     status = solver.solve()
     # x, c = solver.results()
-    solver.results()
+    # solver.results()
     # score = solver.score()
     # print("INTER", score)
 

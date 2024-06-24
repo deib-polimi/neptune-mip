@@ -37,9 +37,10 @@ class Solver:
             print(f"{datetime.datetime.now()}: {msg}")
 
     def solve(self):
+        # DEBUG
         # self.solver.SetMipGap(0.0001)
         # Time
-        self.solver.SetTimeLimit(120 * 1000)
+        # self.solver.SetTimeLimit(120 * 1000)
         # Force optimal
         #self.solver.SetSolverSpecificParametersAsString('limits/solutions = 1')
         self.init_objective()
