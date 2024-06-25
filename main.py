@@ -46,6 +46,9 @@ def serve():
     solver_args = solver_info.get("args", {})
     print("Solver args: ", solver_args)
     with_db = input.get("with_db", True)
+    objective_function_args = solver_args.pop("objective_function", {})
+    # print(objective_function_args)
+
 
     # Fetch the solver class from the mapping
     SolverClass = solver_classes.get(solver_type)
@@ -53,7 +56,7 @@ def serve():
         raise ValueError(f"Unknown solver type: {solver_type}")
 
     # Instantiate the solver
-    solver = SolverClass(**solver_args)
+    solver = SolverClass(**solver_args, **objective_function_args)
     print(solver)
 
     '''
@@ -64,7 +67,7 @@ def serve():
     status = solver.solve()
     # x, c = solver.results()
     # solver.results()
-    # score = solver.score()
+    score = solver.score()
     # print("INTER", score)
 
     # Check solver status
@@ -119,6 +122,8 @@ def serve():
             "sigma_jt_values": sigma_jt_values,
             "y_ftij_values": y_ftij_values,
             # "score": score
+            "status" : status,
+            "score" : score
         }),
         status=200,
         mimetype='application/json'

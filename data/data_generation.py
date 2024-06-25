@@ -17,6 +17,8 @@ class DataGenerator:
         self.min_functions = config["data_generation"]["min_functions"]
         self.max_tables = config["data_generation"]["max_tables"]
         self.min_tables = config["data_generation"]["min_tables"]
+        self.solver = config["solver"]
+        self.with_db = self.solver["with_db"]
 
     def generate_node_names(self):
         num_nodes = random.randint(self.min_nodes, self.max_nodes)
@@ -151,11 +153,8 @@ class DataGenerator:
             workload_on_destination_matrix = self.generate_workload_on_destination_matrix(num_functions, num_nodes)
 
             input_data = {
-                "with_db": False,
-                "solver": {
-                    "type": "NeptuneData",
-                    "args": {"alpha": 1, "verbose": True, "soften_step1_sol": 1.3}
-                },
+                "with_db": self.with_db,
+                "solver": self.solver,
                 "workload_coeff": 1,
                 "community": "community-test",
                 "namespace": "namespace-test",
@@ -184,7 +183,7 @@ class DataGenerator:
                 "workload_on_destination_matrix": workload_on_destination_matrix
             }
 
-            return input_data
+            return input_data,num_nodes,num_functions,num_tables
         else:
             with open('config/default_data.json', 'r') as default_file:
                 self.default_data = json.load(default_file)

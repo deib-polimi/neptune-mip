@@ -82,7 +82,7 @@ class NeptuneMinUtilization(NeptuneBase):
 
 
 class NeptuneData(Solver):
-    def __init__(self, **kwargs):
+    def __init__(self, c_f = True, c_r=False, c_w=False, c_s=False, c_m=False, **kwargs):
         super().__init__(**kwargs)
         self.x = {}
         self.c = {}
@@ -99,6 +99,19 @@ class NeptuneData(Solver):
         self.d = {}
         self.cr = {}
         self.eta = {}
+        self.c_f = c_f
+        self.c_r = c_r
+        self.c_w = c_w
+        self.c_s = c_s
+        self.c_m = c_m
+        
+        # # Print the variables for debugging
+        # print("Debug - Variables:")
+        # print(f"c_f: {self.c_f}")
+        # print(f"c_r: {self.c_r}")
+        # print(f"c_w: {self.c_w}")
+        # print(f"c_s: {self.c_s}")
+        # print(f"c_m: {self.c_m}")
 
     def init_vars(self):
         data = self.data
@@ -140,7 +153,14 @@ class NeptuneData(Solver):
         constraint_linearity_gmax(self.data, self.solver, self.gmax, self.psi, self.d)
 
     def init_objective(self):
-        minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q)
+        #TODO add variables from request
+        c_f = self.c_f
+        c_r = self.c_r
+        c_w = self.c_w
+        c_s = self.c_s
+        c_m = self.c_m
+
+        minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q, c_f, c_r, c_w, c_s, c_m)
 
     def results(self):
         print("Decision variables:")
