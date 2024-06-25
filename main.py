@@ -67,6 +67,7 @@ def serve():
     status = solver.solve()
     # x, c = solver.results()
     # solver.results()
+    q, c, mu, sigma, y = solver.results()
     score = solver.score()
     # print("INTER", score)
 
@@ -82,31 +83,34 @@ def serve():
     nodes = list(range(len(solver.data.nodes)))
     node_delay_matrix = solver.data.node_delay_matrix.tolist()
 
+
+    
     q_ijt_values = {}
     for i in range(len(solver.data.nodes)):
         for j in range(len(solver.data.nodes)):
             for t in range(len(solver.data.tables)):
-                q_ijt_values[f"q[{i}][{j}][{t}]"] = solver.q[i, j, t].solution_value()
+                q_ijt_values[f"q[{i}][{j}][{t}]"] = q[i][j][t]
+    
     c_fi_values = {}
     for i in range(len(solver.data.nodes)):
         for f in range(len(solver.data.functions)):
-            c_fi_values[f"c[{f}][{i}]"] = solver.c[f, i].solution_value()
+            c_fi_values[f"c[{f}][{i}]"] = c[f][i]
     mu_jt_values = {}
     for j in range(len(solver.data.nodes)):
         for t in range(len(solver.data.tables)):
-            mu_jt_values[f"mu[{j}][{t}]"] = solver.mu[j, t].solution_value()
+            mu_jt_values[f"mu[{j}][{t}]"] = mu[j][t]
 
     sigma_jt_values = {}
     for j in range(len(solver.data.nodes)):
         for t in range(len(solver.data.tables)):
-            sigma_jt_values[f"sigma[{j}][{t}]"] = solver.sigma[j, t].solution_value()
+            sigma_jt_values[f"sigma[{j}][{t}]"] = sigma[j, t]
 
     y_ftij_values = {}
     for i in range(len(solver.data.nodes)):
         for j in range(len(solver.data.nodes)):
             for f in range(len(solver.data.functions)):
                 for t in range(len(solver.data.tables)):
-                    y_ftij_values[f"y[{f}][{t}][{i}][{j}]"] = solver.y[f, t, i, j].solution_value()
+                    y_ftij_values[f"y[{f}][{t}][{i}][{j}]"] = y[f, t, i, j]
 
     response = app.response_class(
         response=json.dumps({

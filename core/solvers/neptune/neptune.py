@@ -104,14 +104,6 @@ class NeptuneData(Solver):
         self.c_w = c_w
         self.c_s = c_s
         self.c_m = c_m
-        
-        # # Print the variables for debugging
-        # print("Debug - Variables:")
-        # print(f"c_f: {self.c_f}")
-        # print(f"c_r: {self.c_r}")
-        # print(f"c_w: {self.c_w}")
-        # print(f"c_s: {self.c_s}")
-        # print(f"c_m: {self.c_m}")
 
     def init_vars(self):
         data = self.data
@@ -163,6 +155,13 @@ class NeptuneData(Solver):
         minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q, c_f, c_r, c_w, c_s, c_m)
 
     def results(self):
+        q = output_q(self.data, self.q)
+        c = output_c(self.data, self.c)
+        mu = output_mu(self.data, self.mu)
+        sigma = output_sigma(self.data, self.sigma)
+        y = output_y(self.data, self.y)
+        return q, c, mu, sigma, y
+        '''
         print("Decision variables:")
         # Print decision variables c
         print("\n##### C matrix #####\n")
@@ -233,7 +232,7 @@ class NeptuneData(Solver):
             for t in range(len(self.data.tables)):
                 row.append(self.rho[j, t].solution_value())
             print("\t".join(map(str, row)))
-
+        
         # Print decision variables q
         for t in range(len(self.data.tables)):
             print(f"\n##### q matrix for t={t} #####\n")
@@ -242,7 +241,7 @@ class NeptuneData(Solver):
                 for j in range(len(self.data.nodes)):
                     row.append(self.q[i, j, t].solution_value())
                 print("\t".join(map(str, row)))
-
+        
         # Print decision variables gmax
         print("\n##### gmax vector #####\n")
         for t in range(len(self.data.tables)):
@@ -256,3 +255,5 @@ class NeptuneData(Solver):
                 for j in range(len(self.data.nodes)):
                     row.append(self.d[i, j, t].solution_value())
                 print("\t".join(map(str, row)))
+        '''
+        
