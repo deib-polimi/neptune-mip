@@ -4,5 +4,5 @@
 
 from .data_check import *
 from .data_generation import *
-from .graph_visualization import *
-from .random_graph import *
+from .data_graph_visualization import *
+from .data_random_graph import *

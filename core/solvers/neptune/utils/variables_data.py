@@ -1,5 +1,4 @@
 from .variables import *
-import numpy as np
 
 def init_mu(data, solver, mu):
     for t in range(len(data.tables)):

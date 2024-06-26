@@ -1,5 +1,4 @@
-import numpy as np
-
+# Define the objective function
 
 def minimize_network_data_delay(data, objective, x, z, w, gmax, q, c_f,c_r,c_w,c_s,c_m):
     # Constants

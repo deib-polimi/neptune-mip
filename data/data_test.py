@@ -1,21 +1,18 @@
 import csv
-import numpy as np
 import requests
-import pprint
-import networkx as nx
 import time
 from datetime import datetime
 import os
 
-from data.data_generation import DataGenerator
-import data.graph_visualization as gv
-from data.data_check import *
+from data_generation import DataGenerator
+import data_graph_visualization as gv
+from data_check import *
 import json
 
 # Generate the random data
 
 # Load configuration from config.json
-with open('config/config.json', 'r') as config_file:
+with open('data/config/config.json', 'r') as config_file:
     config = json.load(config_file)
 
 auto_generate = config["auto_generate"]

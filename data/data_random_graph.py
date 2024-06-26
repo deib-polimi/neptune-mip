@@ -1,5 +1,5 @@
 import networkx as nx
-from data.data_generation import random
+from data_generation import random
 import matplotlib.pyplot as plt
 
 

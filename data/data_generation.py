@@ -1,15 +1,15 @@
 import numpy as np
 import random
-import data.random_graph as rg
+import data_random_graph as rg
 import json
-from data.data_check import *
+from data_check import *
 
 class DataGenerator:
     def __init__(self, auto_generate=False, seed=None):
         self.auto_generate = auto_generate
         random.seed(seed)
         # Load configuration from config.json
-        with open('config/config.json', 'r') as config_file:
+        with open('data/config/config.json', 'r') as config_file:
             config = json.load(config_file)
         self.max_nodes = config["data_generation"]["max_nodes"]
         self.min_nodes = config["data_generation"]["min_nodes"]
