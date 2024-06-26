@@ -131,7 +131,7 @@ class NeptuneData(Solver):
         constrain_handle_all_requests(self.data, self.solver, self.x, eq=True)
         constrain_CPU_usage(self.data, self.solver, self.x)
         constraint_table_presence(self.data, self.solver, self.mu)
-        constraint_master_slave(self.data, self.solver, self.mu, self.sigma)  # TODO : da problemi
+        constraint_master_slave(self.data, self.solver, self.mu, self.sigma) 
         constraint_function_assignment(self.data, self.solver, self.y, self.cr, self.c, self.r)
         constraint_node_capacity(self.data, self.solver, self.mu, self.sigma)
         constraint_rho_according_to_y(self.data, self.solver, self.rho, self.y)
@@ -145,7 +145,6 @@ class NeptuneData(Solver):
         constraint_linearity_gmax(self.data, self.solver, self.gmax, self.psi, self.d)
 
     def init_objective(self):
-        #TODO add variables from request
         c_f = self.c_f
         c_r = self.c_r
         c_w = self.c_w
@@ -162,6 +161,9 @@ class NeptuneData(Solver):
         y = output_y(self.data, self.y)
         return q, c, mu, sigma, y
         '''
+
+        DEBUG
+
         print("Decision variables:")
         # Print decision variables c
         print("\n##### C matrix #####\n")

@@ -5,6 +5,7 @@ import pprint
 import networkx as nx
 import time
 from datetime import datetime
+import os
 
 from data.data_generation import DataGenerator
 import data.graph_visualization as gv
@@ -55,8 +56,18 @@ objective_value = response_time
 
 
 output_file = 'optimization_results.csv'
+header = ["Date", "ObjectiveValue", "SolvingTime(s)", "Status", "Nodes", "Functions", "Tables", "Seed"]
+
+# Check if the file exists and contains the header
+write_header = not os.path.isfile(output_file) or os.path.getsize(output_file) == 0
+
+
 with open(output_file, mode='a', newline='') as file:
         writer = csv.writer(file)
+
+        if write_header:
+            writer.writerow(header)
+
         writer.writerow([
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                         response_data["score"], 
