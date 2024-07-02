@@ -12,7 +12,7 @@ import json
 # Generate the random data
 
 # Load configuration from config.json
-with open('data/config/config.json', 'r') as config_file:
+with open('config/config.json', 'r') as config_file:
     config = json.load(config_file)
 
 auto_generate = config["auto_generate"]
