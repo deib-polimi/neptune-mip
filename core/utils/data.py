@@ -45,11 +45,13 @@ class Data:
         self.core_per_req_matrix: np.array = np.array([])  # u_j,f_CPU/GPU
         self.read_per_req_matrix: np.array = np.array([])  # beta_f_t
         self.write_per_req_matrix: np.array = np.array([])  # gamma_f_t
+        self.r_ft_matrix: np.array = np.array([])   # r_ft
         self.max_delay = 0  # delta_max
 
         # Decision variables old
         self.prev_x = np.array([])  # x_f,i,j_CPU/GPU(old)
-        self.old_allocations_matrix: np.array = np.array([])  # c_f,i_CPU/GPU(old)
+        self.prev_c = np.array([])  # c_f,i_CPU/GPU(old)
+        self.old_allocations_matrix: np.array = np.array([])  # TODO Remove
 
         # Not part of optimization
 

@@ -29,7 +29,7 @@ app.app_context()
 # Mapping of solver types to their respective classes
 solver_classes = {
     'NeptuneData': NeptuneData,
-
+    'NeptuneFunctionsFirst': NeptuneFunctionsFirst,
 }
 
 
@@ -50,7 +50,6 @@ def serve():
     with_db = input_data.get("with_db", True)
     objective_function_args = solver_args.pop("objective_function", {})
 
-
     # Fetch the solver class from the mapping
     SolverClass = solver_classes.get(solver_type)
     if SolverClass is None:
@@ -64,10 +63,11 @@ def serve():
     solver = eval(solver_type)(**solver_args)
     print(solver)
     '''
-    solver.load_data(data_to_solver_input(input_data, with_db=with_db, workload_coeff=input_data.get("workload_coeff", 1)))
+    solver.load_data(
+        data_to_solver_input(input_data, with_db=with_db, workload_coeff=input_data.get("workload_coeff", 1)))
     status = solver.solve()
     # x, c = solver.results()
-    q, c, mu, sigma, y = solver.results()
+    q, c, mu, sigma, y, c_f, c_r, c_w, c_s = solver.results()
     score = solver.score()
     print("INTER", score)
 
@@ -83,14 +83,11 @@ def serve():
     nodes = list(range(len(solver.data.nodes)))
     node_delay_matrix = solver.data.node_delay_matrix.tolist()
 
-
-    
     q_ijt_values = convert_q(q, solver.data)
     c_fi_values = convert_c(c, solver.data)
     mu_jt_values = convert_mu(mu, solver.data)
     sigma_jt_values = convert_sigma(sigma, solver.data)
     y_ftij_values = convert_y(y, solver.data)
-    
 
     response = app.response_class(
         response=json.dumps({
@@ -106,7 +103,11 @@ def serve():
             "sigma_jt_values": sigma_jt_values,
             "y_ftij_values": y_ftij_values,
             "score": score,
-            "status" : status
+            "status": status,
+            "c_f": c_f,
+            "c_r": c_r,
+            "c_w": c_w,
+            "c_s": c_s
         }),
         status=200,
         mimetype='application/json'

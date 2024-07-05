@@ -1,5 +1,8 @@
 import numpy as np
 import random
+
+import pandas as pd
+
 import data_random_graph as rg
 import json
 from data_check import *
@@ -55,22 +58,23 @@ def generate_workload_on_destination_matrix(num_functions, num_nodes):
 def generate_delay_matrix(num_nodes):
     # Generate a symmetric delay matrix with random delays between 1 and 10
     delay_matrix = rg.random_delays(num_nodes)
+    print(pd.DataFrame(delay_matrix))
     return delay_matrix
 
 
 def generate_node_memories(num_nodes):
     # Generate random memory values for each node
-    return [random.randint(50, 500) for _ in range(num_nodes)]
+    return [random.randint(250, 550) for _ in range(num_nodes)]
 
 
 def generate_node_storage(num_nodes):
     # Generate random storage values for each node
-    return [random.randint(128, 512) for _ in range(num_nodes)]
+    return [random.randint(512, 2048) for _ in range(num_nodes)]
 
 
 def generate_node_cores(num_nodes):
     # Generate random core values between for each node
-    return [random.randint(20, 40) for _ in range(num_nodes)]
+    return [random.randint(20, 50) for _ in range(num_nodes)]
 
 
 def generate_function_memories(num_functions):
@@ -78,7 +82,7 @@ def generate_function_memories(num_functions):
 
 
 def generate_function_max_delays(num_functions):
-    return [random.randint(10, 20) for _ in range(num_functions)]
+    return [random.randint(20, 30) for _ in range(num_functions)]
 
 
 # generate u_f_j

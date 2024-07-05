@@ -73,8 +73,11 @@ with open(output_file, mode='a', newline='') as file:
                         num_nodes,
                         num_functions,
                         num_tables,
-                        SEED
-
+                        SEED,
+                        response_data["c_f"],
+                        response_data["c_r"],
+                        response_data["c_w"],
+                        response_data["c_s"]
                     ])
 
 

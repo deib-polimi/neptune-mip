@@ -139,10 +139,11 @@ def data_to_solver_input(input, workload_coeff, with_db=True):
     data.node_storage_matrix = np.array(aux_data.node_storage_matrix)
     assert (len(data.node_storage_matrix) != 0)
     data.v_old_matrix = np.array(aux_data.v_old_matrix)
+    data.r_ft_matrix = np.array(aux_data.r_ft_matrix)
     data.tables_sizes = np.array(aux_data.tables_sizes)
     data.read_per_req_matrix = np.array(aux_data.read_per_req_matrix)
     data.write_per_req_matrix = np.array(aux_data.write_per_req_matrix)
-    data.v_old_matrix = np.array(aux_data.v_old_matrix)
+    # data.v_old_matrix = np.array(aux_data.v_old_matrix)
 
     return data
 
@@ -287,6 +288,16 @@ def setup_runtime_data(data, input):
         data.v_old_matrix = v_old_matrix
     else:
         data.v_old_matrix = [[1 for _ in data.tables] for _ in data.nodes]
+
+    # Retrieve 'r_ft_matrix' from input, defaulting to None if not present
+    r_ft_matrix = input.get('r_ft_matrix', None)
+
+    # If 'r_ft_matrix' is provided in the input, use it
+    # If 'r_ft_matrix' is not provided, create a default matrix
+    if r_ft_matrix:
+        data.r_ft_matrix = r_ft_matrix
+    else:
+        data.r_ft_matrix = [[1 for _ in data.tables] for _ in data.functions]
 
     # Retrieve 'read_per_req_matrix' from input, defaulting to None if not present
     read_per_req_matrix = input.get('read_per_req_matrix', None)

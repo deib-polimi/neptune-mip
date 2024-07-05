@@ -43,21 +43,21 @@ def constraint_function_assignment(data, solver, y, cr, c, r):
                     solver.Sum([
                         y[f, t, i, j] for j in range(len(data.nodes))
                     ])
-                    == cr[f, t, i]
+                    == c[f, i] * data.r_ft_matrix[f, t]
                 )
     # Linearization
-    for i in range(len(data.nodes)):
-        for t in range(len(data.tables)):
-            for f in range(len(data.functions)):
-                solver.Add(
-                    cr[f, t, i] <= c[f, i]
-                )
-                solver.Add(
-                    cr[f, t, i] <= r[f, t]
-                )
-                solver.Add(
-                    cr[f, t, i] >= c[f, i] + r[f, t] - 1
-                )
+    # for i in range(len(data.nodes)):
+    #     for t in range(len(data.tables)):
+    #         for f in range(len(data.functions)):
+    #             solver.Add(
+    #                 cr[f, t, i] <= c[f, i]
+    #             )
+    #             solver.Add(
+    #                 cr[f, t, i] <= r[f, t]
+    #             )
+    #             solver.Add(
+    #                 cr[f, t, i] >= c[f, i] + r[f, t] - 1
+    #             )
     # DEBUG
     # Force self loops
     # for i in range(len(data.nodes)):
@@ -106,12 +106,20 @@ def constraint_rho_according_to_y(data, solver, rho, y):
 def constraint_r_according_to_beta_and_gamma(data, solver, r):
     for f in range(len(data.functions)):
         for t in range(len(data.tables)):
-            solver.Add(
-                float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) >= 1 - M * (1 - r[f, t])
-            )
-            solver.Add(
-                float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) <= M * (r[f, t])
-            )
+            # solver.Add(
+            #     float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) >= 1 - M * (1 - r[f, t])
+            # )
+            # solver.Add(
+            #     float(data.write_per_req_matrix[f, t] + data.read_per_req_matrix[f, t]) <= M * (r[f, t])
+            # )
+            # DEBUG
+            # solver.Add(
+            #     float(data.read_per_req_matrix[f, t]) >= 1 - M * (1 - r[f, t])
+            # )
+            # solver.Add(
+            #     float(data.read_per_req_matrix[f, t]) <= M * (r[f, t])
+            # )
+            pass
 
 
 # If there is a function reading on table t in node j and the table was not present, then the table
@@ -139,7 +147,7 @@ def constraint_migration_2(data, solver, q, sigma, mu):
                     q[i, j, t] <= data.v_old_matrix[i, t]
                 )
 
-    #for j in range(len(data.nodes)):
+    # for j in range(len(data.nodes)):
     #    for t in range(len(data.tables)):
     #        solver.Add(
     #            solver.Sum([
@@ -147,6 +155,7 @@ def constraint_migration_2(data, solver, q, sigma, mu):
     #                for i in range(len(data.nodes))
     #            ]) == sigma[j, t] + mu[j, t]
     #        )
+
 
 # The table should be present
 
@@ -214,10 +223,10 @@ def constraint_linearity_gmax(data, solver, gmax, psi, d):
     for t in range(len(data.tables)):
         for i in range(len(data.nodes)):
             for j in range(len(data.nodes)):
-                ###
+                ### TODO: check if it can be removed
                 solver.Add(
                     psi[i, j, t] * data.node_delay_matrix[i, j] <= data.node_delay_matrix[i, j]
-                 )
+                )
                 solver.Add(
                     gmax[t] >= psi[i, j, t] * data.node_delay_matrix[i, j]
                 )
@@ -227,9 +236,9 @@ def constraint_linearity_gmax(data, solver, gmax, psi, d):
 
     for t in range(len(data.tables)):
         solver.Add(
-          solver.Sum([
-              d[i, j, t]
-              for i in range(len(data.nodes))
-              for j in range(len(data.nodes))
-              ]) == 1
+            solver.Sum([
+                d[i, j, t]
+                for i in range(len(data.nodes))
+                for j in range(len(data.nodes))
+            ]) == 1
         )

@@ -3,7 +3,7 @@
     "SEED": 43,
     "solver": {
         "with_db": false,
-        "type": "NeptuneData",
+        "type": "NeptuneFunctionsFirst",
         "args": {
             "alpha": 1,
             "verbose": true,
@@ -26,11 +26,11 @@
         "url": "http://10.75.4.148:5000/"
     },
     "data_generation": {
-        "max_nodes": 3,
-        "min_nodes": 3,
-        "max_functions": 4,
-        "min_functions": 4,
-        "max_tables": 6,
-        "min_tables": 6
+        "max_nodes": 5,
+        "min_nodes": 5,
+        "max_functions": 5,
+        "min_functions": 5,
+        "max_tables": 15,
+        "min_tables": 15
     }
 }

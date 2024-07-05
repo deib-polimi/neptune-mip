@@ -21,6 +21,7 @@ def print_data(input_data):
     print("\nTable location")
     display_table_node_matrix(input_data)
 
+
 def create_graph_from_data(data):
     # Extract node names and their attributes from the data
     node_names = data["node_names"]
@@ -226,7 +227,6 @@ def draw_function_dep_graph(response_data):
     sigma_jt_values = response_data.get("sigma_jt_values")
     y_ftij_values = response_data.get("y_ftij_values")
 
-
     # Create a new dictionary for the node labels
     node_labels = {i: f"node_{chr(97 + i)}" for i in range(len(nodes))}
     # Initialize dictionaries for master tables, slaves, and functions
@@ -241,6 +241,7 @@ def draw_function_dep_graph(response_data):
             node_details[i]["functions"].append(f)
 
             '''
+            # DEBUG
             if ": f" in node_labels[i]:
                 node_labels[i] += f",f{f}"
             else:
@@ -255,6 +256,7 @@ def draw_function_dep_graph(response_data):
 
             node_details[i]["master_tables"].append(t)
             '''
+            # DEBUG
             if ": T" in node_labels[i]:
                 node_labels[i] += f",T{t}"
             else:
@@ -273,6 +275,7 @@ def draw_function_dep_graph(response_data):
             node_details[i]["slaves"].append(t)
 
             '''
+            # DEBUG
             if f"t{t}" not in node_labels[i]:
                 node_labels[i] = f"{node_labels[i]}: t{t}"
             else:
@@ -280,6 +283,9 @@ def draw_function_dep_graph(response_data):
             '''
     # Create DiGraph
     G = nx.DiGraph()
+
+    # DEBUG
+    count = 0
 
     # Add nodes to each graph
     for node in nodes:
@@ -292,7 +298,11 @@ def draw_function_dep_graph(response_data):
             f, t, i, j = map(int, key.strip('y[]').split(']['))
             G.add_edge(nodes[i], nodes[j], color='red', label=f't: {t} f: {f}')
             print(f"node_{i} ----- f{f},t{t}----->node_{j}")
+            count += 1
     print("")
+
+    # DEBUG
+    print("Total dependencies:", count, "\n")
 
     # Get positions for the nodes in the graph
     pos = nx.spring_layout(G)

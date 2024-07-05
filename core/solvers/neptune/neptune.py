@@ -1,5 +1,6 @@
 from ..solver import Solver
 from .neptune_step1 import *
+from .neptune_function_first import *
 from .neptune_step2 import *
 from .utils.output import convert_x_matrix, convert_c_matrix
 from .utils.constraints_data import *
@@ -82,7 +83,7 @@ class NeptuneMinUtilization(NeptuneBase):
 
 
 class NeptuneData(Solver):
-    def __init__(self, c_f = True, c_r=False, c_w=False, c_s=False, c_m=False, **kwargs):
+    def __init__(self, c_f=True, c_r=False, c_w=False, c_s=False, c_m=False, **kwargs):
         super().__init__(**kwargs)
         self.x = {}
         self.c = {}
@@ -131,7 +132,7 @@ class NeptuneData(Solver):
         constrain_handle_all_requests(self.data, self.solver, self.x, eq=True)
         constrain_CPU_usage(self.data, self.solver, self.x)
         constraint_table_presence(self.data, self.solver, self.mu)
-        constraint_master_slave(self.data, self.solver, self.mu, self.sigma) 
+        constraint_master_slave(self.data, self.solver, self.mu, self.sigma)
         constraint_function_assignment(self.data, self.solver, self.y, self.cr, self.c, self.r)
         constraint_node_capacity(self.data, self.solver, self.mu, self.sigma)
         constraint_rho_according_to_y(self.data, self.solver, self.rho, self.y)
@@ -151,7 +152,8 @@ class NeptuneData(Solver):
         c_s = self.c_s
         c_m = self.c_m
 
-        minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q, c_f, c_r, c_w, c_s, c_m)
+        minimize_network_data_delay(self.data, self.objective, self.x, self.z, self.w, self.gmax, self.q, c_f, c_r, c_w,
+                                    c_s, c_m)
 
     def results(self):
         q = output_q(self.data, self.q)
@@ -159,8 +161,18 @@ class NeptuneData(Solver):
         mu = output_mu(self.data, self.mu)
         sigma = output_sigma(self.data, self.sigma)
         y = output_y(self.data, self.y)
-        return q, c, mu, sigma, y
-        '''
+        z = output_z(self.data, self.z)
+        w = output_w(self.data, self.w)
+        x = output_x(self.data, self.x)
+        gmax = output_gmax(self.data, self.gmax)
+        c_f = compute_c_f_cost(self.data, x)
+        c_r = compute_c_r_cost(self.data, z)
+        c_w = compute_c_w_cost(self.data, w)
+        c_s = compute_c_s_cost(self.data, gmax)
+        return q, c, mu, sigma, y, c_f, c_r, c_w, c_s
+
+
+    '''
 
         DEBUG
 
@@ -258,4 +270,3 @@ class NeptuneData(Solver):
                     row.append(self.d[i, j, t].solution_value())
                 print("\t".join(map(str, row)))
         '''
-        
