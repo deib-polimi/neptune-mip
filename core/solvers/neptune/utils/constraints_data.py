@@ -223,10 +223,6 @@ def constraint_linearity_gmax(data, solver, gmax, psi, d):
     for t in range(len(data.tables)):
         for i in range(len(data.nodes)):
             for j in range(len(data.nodes)):
-                ### TODO: check if it can be removed
-                solver.Add(
-                    psi[i, j, t] * data.node_delay_matrix[i, j] <= data.node_delay_matrix[i, j]
-                )
                 solver.Add(
                     gmax[t] >= psi[i, j, t] * data.node_delay_matrix[i, j]
                 )

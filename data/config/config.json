@@ -28,9 +28,9 @@
     "data_generation": {
         "max_nodes": 5,
         "min_nodes": 5,
-        "max_functions": 5,
-        "min_functions": 5,
-        "max_tables": 15,
-        "min_tables": 15
+        "max_functions": 4,
+        "min_functions": 4,
+        "max_tables": 10,
+        "min_tables": 10
     }
 }

@@ -94,8 +94,8 @@ def check_input(schedule_input):
     print(f"Checking tables consistencies...")
 
     # Assuming that, if node's storage is 0, it has to be explicitly set
-    # TODO: set capacity to 0 if not provided automatically
-    # TODO: test also that a table that was previously declared is present somewhere
+    if not node_storage:
+        node_storage = [0 for _ in range(len(nodes))]
 
     assert len(node_storage) == len(nodes)
     assert len(tables) == len(tables_sizes)
@@ -103,12 +103,12 @@ def check_input(schedule_input):
     print("Everything seems consistent")
 
 
-def data_to_solver_input(input, workload_coeff, with_db=True):
+def data_to_solver_input(input_data, workload_coeff, with_db=True):
     aux_data = Data()
 
-    setup_community_data(input, aux_data)
+    setup_community_data(input_data, aux_data)
 
-    setup_runtime_data(aux_data, input)
+    setup_runtime_data(aux_data, input_data)
 
     create_mappings(aux_data)
 
@@ -148,57 +148,56 @@ def data_to_solver_input(input, workload_coeff, with_db=True):
     return data
 
 
-def setup_community_data(input, data):
+def setup_community_data(input_data, data):
     """
     Sets up community-related data in the Data object.
 
     Parameters:
-    - input (dict): TODO
+    - input_data (dict):
     - data (Data): The data object to set up.
     """
 
-    data.community = input.get('community')
-    data.namespace = input.get('namespace')
-    data.functions = input.get('function_names', [])
-    data.gpu_functions = input.get('gpu_function_names', [])
+    data.community = input_data.get('community')
+    data.namespace = input_data.get('namespace')
+    data.functions = input_data.get('function_names', [])
+    data.gpu_functions = input_data.get('gpu_function_names', [])
     data.gpu_functions_set = set(data.gpu_functions)
     data.gpu_functions_mask = np.array([f in data.gpu_functions_set for f in data.functions])
-    data.nodes = input.get('node_names', [])
-    data.gpu_nodes = input.get('gpu_node_names', [])
+    data.nodes = input_data.get('node_names', [])
+    data.gpu_nodes = input_data.get('gpu_node_names', [])
     data.gpu_nodes_set = set(data.gpu_nodes)
     data.gpu_nodes_mask = np.array([n in data.gpu_nodes_set for n in data.nodes])
 
-    # TODO: maybe is better to do these checks in check_input for
 
     assert set(data.gpu_functions).issubset(set(data.functions))
     assert set(data.gpu_nodes).issubset(set(data.nodes))
 
-    data.function_memories = input.get('function_memories')
-    data.node_memories = input.get('node_memories')
-    data.gpu_node_memories = input.get('gpu_node_memories')
-    data.actual_cpu_allocations = input.get('actual_cpu_allocations')
-    data.actual_gpu_allocations = input.get('actual_gpu_allocations')
-    data.node_cores = input.get('node_cores')
-    data.gpu_function_memories = input.get('gpu_function_memories')
+    data.function_memories = input_data.get('function_memories')
+    data.node_memories = input_data.get('node_memories')
+    data.gpu_node_memories = input_data.get('gpu_node_memories')
+    data.actual_cpu_allocations = input_data.get('actual_cpu_allocations')
+    data.actual_gpu_allocations = input_data.get('actual_gpu_allocations')
+    data.node_cores = input_data.get('node_cores')
+    data.gpu_function_memories = input_data.get('gpu_function_memories')
     data.max_delay_matrix = [1000 for _ in range(len(data.function_memories))]
 
-    data.node_storage_matrix = np.array(input.get('node_storage', []))
+    data.node_storage_matrix = np.array(input_data.get('node_storage', []))
 
-    data.tables = input.get('table_names', [])
-    data.tables_names = input.get('table_names', [])
-    data.tables_sizes = input.get('table_sizes', [])
+    data.tables = input_data.get('table_names', [])
+    data.tables_names = input_data.get('table_names', [])
+    data.tables_sizes = input_data.get('table_sizes', [])
 
 
-def setup_runtime_data(data, input):
+def setup_runtime_data(data, input_data):
     """
     Sets up runtime-related data in the Data object.
 
     Parameters:
     - data (Data): The data object to set up.
-    - input (dict): TODO
+    - input_data (dict):
     """
     # Retrieve 'node_delay_matrix' from input, defaulting to None if not present
-    node_delay_matrix = input.get('node_delay_matrix', None)
+    node_delay_matrix = input_data.get('node_delay_matrix', None)
 
     # If 'node_delay_matrix' is provided in the input, use it
     # If 'node_delay_matrix' is not provided, create a default matrix
@@ -213,7 +212,7 @@ def setup_runtime_data(data, input):
     data.gpu_node_delay_matrix = [[1 if s != d else 0 for s in data.nodes] for d in data.gpu_nodes]
 
     # Attempt to retrieve 'workload_on_source_matrix' from the input dictionary
-    workload_on_source_matrix = input.get('workload_on_source_matrix', None)
+    workload_on_source_matrix = input_data.get('workload_on_source_matrix', None)
 
     # If 'workload_on_source_matrix' is provided in the input, convert it to a NumPy array and assign it
     # If 'workload_on_source_matrix' is not provided, create a default matrix with zeros
@@ -225,7 +224,7 @@ def setup_runtime_data(data, input):
         data.workload_on_source_matrix = np.array([[0 for _ in data.nodes] for _ in data.functions])
 
     # Attempt to retrieve 'workload_on_destination_matrix' from the input dictionary
-    workload_on_destination_matrix = input.get('workload_on_destination_matrix', None)
+    workload_on_destination_matrix = input_data.get('workload_on_destination_matrix', None)
 
     # If 'workload_on_destination_matrix' is provided in the input, convert it to a NumPy array and assign it
     # If 'workload_on_destination_matrix' is not provided, create a default matrix with zeros
@@ -241,7 +240,7 @@ def setup_runtime_data(data, input):
     data.gpu_workload_on_destination_matrix = np.array([[0 for _ in data.gpu_nodes] for _ in data.gpu_functions])
 
     # Retrieve or initialize cores matrix
-    cores_matrix = input.get('cores_matrix', None)
+    cores_matrix = input_data.get('cores_matrix', None)
 
     # If cores_matrix is not provided, create a default matrix with zeros
     # Rows: Functions, Columns: Nodes
@@ -271,7 +270,7 @@ def setup_runtime_data(data, input):
     # Rows: Functions, Columns: Nodes
     # u_f_j
 
-    core_per_req_matrix = input.get('core_per_req_matrix', None)
+    core_per_req_matrix = input_data.get('core_per_req_matrix', None)
     if core_per_req_matrix:
         data.core_per_req_matrix = core_per_req_matrix
     else:
@@ -280,7 +279,7 @@ def setup_runtime_data(data, input):
     # Data related part
 
     # Retrieve 'v_old_matrix' from input, defaulting to None if not present
-    v_old_matrix = input.get('v_old_matrix', None)
+    v_old_matrix = input_data.get('v_old_matrix', None)
 
     # If 'v_old_matrix' is provided in the input, use it
     # If 'v_old_matrix' is not provided, create a default matrix
@@ -290,7 +289,7 @@ def setup_runtime_data(data, input):
         data.v_old_matrix = [[1 for _ in data.tables] for _ in data.nodes]
 
     # Retrieve 'r_ft_matrix' from input, defaulting to None if not present
-    r_ft_matrix = input.get('r_ft_matrix', None)
+    r_ft_matrix = input_data.get('r_ft_matrix', None)
 
     # If 'r_ft_matrix' is provided in the input, use it
     # If 'r_ft_matrix' is not provided, create a default matrix
@@ -300,7 +299,7 @@ def setup_runtime_data(data, input):
         data.r_ft_matrix = [[1 for _ in data.tables] for _ in data.functions]
 
     # Retrieve 'read_per_req_matrix' from input, defaulting to None if not present
-    read_per_req_matrix = input.get('read_per_req_matrix', None)
+    read_per_req_matrix = input_data.get('read_per_req_matrix', None)
 
     # If 'read_per_req_matrix' is provided in the input, use it
     # If 'read_per_req_matrix' is not provided, create a default matrix
@@ -310,7 +309,7 @@ def setup_runtime_data(data, input):
         data.read_per_req_matrix = [[0 for _ in data.functions] for _ in data.tables]
 
     # Retrieve 'write_per_req_matrix' from input, defaulting to None if not present
-    write_per_req_matrix = input.get('write_per_req_matrix', None)
+    write_per_req_matrix = input_data.get('write_per_req_matrix', None)
 
     # If 'write_per_req_matrix' is provided in the input, use it
     # If 'write_per_req_matrix' is not provided, create a default matrix

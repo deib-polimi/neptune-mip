@@ -279,7 +279,7 @@ class DataGenerator:
                 "r_ft_matrix": r_ft_matrix,
                 "write_per_req_matrix": write_per_req_matrix,
                 "read_per_req_matrix": read_per_req_matrix,
-                "cores_matrix": cores_matrix,  # TODO: cos'è?
+                "cores_matrix": cores_matrix,
                 "workload_on_destination_matrix": workload_on_destination_matrix
             }
 
